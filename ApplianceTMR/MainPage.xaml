@@ -6,9 +6,28 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    >
 
-    <Grid>
+    
+    <Grid Name="Timers">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        
+        
     </Grid>
+    
+    <Page.BottomAppBar>
+        <CommandBar>
+            <AppBarButton x:Name="NewTimer" Icon="Add" Label="New" />
+            <AppBarButton x:Name="Settings" Icon="Setting" Label="Settings" />
+            <AppBarButton x:Name="About" Icon="Account" Label="About" />
+        </CommandBar>
+    </Page.BottomAppBar>
+
 </Page>
