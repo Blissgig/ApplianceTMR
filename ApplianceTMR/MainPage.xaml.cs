@@ -55,11 +55,11 @@ namespace ApplianceTMR
         {
             try
             {
-                this.NewTimer.IsEnabled = false;
+                this.NewTimer.IsEnabled = false; //To insure that that multiple timers are started at the same time... may remove this.
 
-                AppBar dBottomAppBar = this.BottomAppBar; //Not right, but close.
+                AppBar dBottomAppBar = this.BottomAppBar; 
 
-                double dSize = Convert.ToDouble((this.ActualHeight / 3) - dBottomAppBar.ActualHeight);
+                double dSize = Convert.ToDouble((this.ActualHeight - dBottomAppBar.ActualHeight) / 3);
 
                 TimerTile timerTile = new TimerTile();
 
@@ -91,12 +91,20 @@ namespace ApplianceTMR
             catch (Exception ex)
             {
                 logException(ex);
+                this.NewTimer.IsEnabled = true; //Just in case
             }
         }
 
-        private void logException(Exception ex)
+        private void Settings_Click(object sender, RoutedEventArgs e)
         {
-            
+            try
+            {
+                //TODO
+            }
+            catch (Exception ex)
+            {
+                logException(ex);
+            }
         }
 
         private async void About_Click(object sender, RoutedEventArgs e)
@@ -124,5 +132,12 @@ namespace ApplianceTMR
                 logException(ex);
             }
         }
+
+        private void logException(Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine(ex.Message);
+        }
+
+
     }
 }

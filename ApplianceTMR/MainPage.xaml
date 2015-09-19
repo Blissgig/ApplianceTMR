@@ -9,12 +9,11 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     >
 
-    <Canvas Name="Timers"></Canvas>
-    
+    <Canvas Name="Timers" />
     <Page.BottomAppBar>
         <CommandBar>
             <AppBarButton x:Name="NewTimer" Icon="Add" Label="New" Click="NewTimer_Click"/>
-            <AppBarButton x:Name="Settings" Icon="Setting" Label="Settings" />
+            <AppBarButton x:Name="Settings" Icon="Setting" Label="Settings" Click="Settings_Click"/>
             <AppBarButton x:Name="About" Icon="Account" Label="About" Click="About_Click" />
         </CommandBar>
     </Page.BottomAppBar>

@@ -57,6 +57,11 @@ namespace ApplianceTMR
             try
             {
                 mTimerTime = mTimerTime.Add(Value);
+                
+                if (mTimerTime.TotalSeconds < 0)
+                {
+                    mTimerTime = new TimeSpan(0, 0, 0);
+                }
 
                 UpdateTimerDisplay();
             }
