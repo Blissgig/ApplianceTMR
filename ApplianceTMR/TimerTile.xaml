@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    d:DesignHeight="200"
+    d:DesignHeight="160"
     d:DesignWidth="480">
     
     <Grid Background="DarkBlue" Margin="8">
@@ -15,7 +15,7 @@
         </Grid.RowDefinitions>
         
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200" />
+            <ColumnDefinition x:Name="ColumnIcon" Width="160" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
@@ -32,14 +32,10 @@
                 <ColumnDefinition Width="50" />
             </Grid.ColumnDefinitions>
 
-            <AppBarButton Name="abTimeDown" Grid.Row="0" Grid.Column="0" Icon="Back" IsCompact="True" VerticalAlignment="Center" />
-            
-            <TextBlock Name="ApplTime" Grid.Row="0"  Grid.Column="1" Text="10" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="88"/>
-
-            <AppBarButton Name="abTimeUp" Grid.Row="0" Grid.Column="2" Icon="Forward" IsCompact="True" VerticalAlignment="Center" />
-            
-            <TextBlock Name="AppStartTime" Grid.Row="2"  Grid.Column="0" Grid.ColumnSpan="3" Text="Started: 10:18 AM" TextAlignment="Center" FontSize="30"/>
+            <AppBarButton Name="abTimeDown" Grid.Row="0" Grid.Column="0" Icon="Back" IsCompact="True" VerticalAlignment="Center"  Click="abTimeDown_Click"/>
+            <TextBlock Name="ApplTime" Grid.Row="0" Grid.Column="1" Text="0" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="88"/>
+            <AppBarButton Name="abTimeUp" Grid.Row="0" Grid.Column="2" Icon="Forward" IsCompact="True" VerticalAlignment="Center" Click="abTimeUp_Click" />
+            <TextBlock Name="ApplStartTime" Grid.Row="2"  Grid.Column="0" Grid.ColumnSpan="3" Text="Press To Start" TextAlignment="Center" FontSize="30"/>
         </Grid>        
-        
     </Grid>
 </UserControl>

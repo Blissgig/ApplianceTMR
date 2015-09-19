@@ -2,16 +2,19 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=391641
 
@@ -43,6 +46,55 @@ namespace ApplianceTMR
             // Windows.Phone.UI.Input.HardwareButtons.BackPressed event.
             // If you are using the NavigationHelper provided by some templates,
             // this event is handled for you.
+        }
+
+        private void NewTimer_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                TimerTile timerTile = new TimerTile();
+
+                timerTile.Width = this.ActualWidth;
+                timerTile.Height = (this.ActualHeight / 3);
+                timerTile.SetDefaults(new TimeSpan(0, 8, 0));
+                this.Timers.Children.Add(timerTile);
+
+            }
+            catch (Exception ex)
+            {
+                logException(ex);
+            }
+        }
+
+        private void logException(Exception ex)
+        {
+            
+        }
+
+        private async void About_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string appName = Package.Current.Id.Name;
+                var version = Package.Current.Id.Version;
+                string appVersion = String.Format("{0}.{1}.{2}.{3}",
+                    version.Major, version.Minor, version.Build, version.Revision);
+                
+
+                string Message =
+                    "Site: Blissgig.com" + Environment.NewLine +
+                    "Contact: Blissgig@gmail.com" + Environment.NewLine +
+                    "Copyright 2015 James Rose" + Environment.NewLine +
+                    "Version: " + appVersion;
+
+
+                MessageDialog messageDialog = new MessageDialog(Message, appName);
+                await messageDialog.ShowAsync();
+            }
+            catch (Exception ex)
+            {
+                logException(ex);
+            }
         }
     }
 }

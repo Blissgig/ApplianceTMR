@@ -19,9 +19,63 @@ namespace ApplianceTMR
 {
     public sealed partial class TimerTile : UserControl
     {
+        private TimeSpan mTimerTime;
+
         public TimerTile()
         {
             this.InitializeComponent();
         }
+
+        public void SetDefaults(TimeSpan Time)
+        {
+            try
+            {
+                mTimerTime = Time;
+
+                UpdateTimerDisplay();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        private void UpdateTimerDisplay()
+        {
+            try
+            {
+                this.ApplTime.Text = mTimerTime.Minutes.ToString();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        private void UpdateTimer(TimeSpan Value)
+        {
+            try
+            {
+                mTimerTime = mTimerTime.Add(Value);
+
+                UpdateTimerDisplay();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        private void abTimeDown_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateTimer(new TimeSpan(0, -1, 0));
+        }
+
+        private void abTimeUp_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateTimer(new TimeSpan(0, 1, 0));
+        }
+
+
     }
 }
