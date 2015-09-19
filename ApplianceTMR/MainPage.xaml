@@ -9,18 +9,7 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     >
 
-    
-    <Grid Name="Timers">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        
-        
-    </Grid>
+    <Canvas Name="Timers"></Canvas>
     
     <Page.BottomAppBar>
         <CommandBar>

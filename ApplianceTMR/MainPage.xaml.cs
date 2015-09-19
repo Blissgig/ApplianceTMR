@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 
@@ -25,6 +26,8 @@ namespace ApplianceTMR
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        private byte mbTimerCount = 0;
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -52,13 +55,38 @@ namespace ApplianceTMR
         {
             try
             {
+                this.NewTimer.IsEnabled = false;
+
+                AppBar dBottomAppBar = this.BottomAppBar; //Not right, but close.
+
+                double dSize = Convert.ToDouble((this.ActualHeight / 3) - dBottomAppBar.ActualHeight);
+
                 TimerTile timerTile = new TimerTile();
 
                 timerTile.Width = this.ActualWidth;
-                timerTile.Height = (this.ActualHeight / 3);
+                timerTile.Height = dSize;
                 timerTile.SetDefaults(new TimeSpan(0, 8, 0));
                 this.Timers.Children.Add(timerTile);
 
+                
+                Storyboard AddTile = new Storyboard();
+                DoubleAnimation MoveAnimation = new DoubleAnimation();
+                MoveAnimation.Duration = new Duration(TimeSpan.FromMilliseconds(400));
+                MoveAnimation.From = this.ActualHeight;
+                MoveAnimation.To = (mbTimerCount * dSize);
+
+                Storyboard.SetTarget(MoveAnimation, timerTile);
+                Storyboard.SetTargetProperty(MoveAnimation, "(Canvas.Top)");
+
+                AddTile.Children.Add(MoveAnimation);
+                AddTile.Completed += (sendr, args) =>
+                    {
+                        this.NewTimer.IsEnabled = true;
+                    };
+                AddTile.Begin();
+                
+
+                mbTimerCount += 1;
             }
             catch (Exception ex)
             {
@@ -75,7 +103,7 @@ namespace ApplianceTMR
         {
             try
             {
-                string appName = Package.Current.Id.Name;
+                string appName = "ApplianceTMR";
                 var version = Package.Current.Id.Version;
                 string appVersion = String.Format("{0}.{1}.{2}.{3}",
                     version.Major, version.Minor, version.Build, version.Revision);
