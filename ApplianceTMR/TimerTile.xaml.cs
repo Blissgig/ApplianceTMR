@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-
+using Windows.UI.Notifications; //For toast
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -21,7 +21,8 @@ namespace ApplianceTMR
     public sealed partial class TimerTile : UserControl
     {
         private TimeSpan mTimerTime;
-        
+        private bool mbTimerRunning = false;
+
 
         public TimerTile()
         {
@@ -46,29 +47,33 @@ namespace ApplianceTMR
         {
             try
             {
-                //TODO: Bool if running
+                mbTimerRunning = !mbTimerRunning;
 
-                mTimerTime = mTimerTime.Subtract(new TimeSpan(0, 0, 1));
-
-                if (mTimerTime.Seconds == 0)
+                if (mbTimerRunning == true)
                 {
-                    mTimerTime = mTimerTime.Subtract(new TimeSpan(0, 1, 0));
+                    mTimerTime = mTimerTime.Subtract(new TimeSpan(0, 0, 1));
+
+                    if (mTimerTime.Seconds == 0)
+                    {
+                        mTimerTime = mTimerTime.Subtract(new TimeSpan(0, 1, 0));
+                    }
+
+
+                    if (mTimerTime.TotalSeconds == 0)
+                    {
+                        ATMREngine engine = new ATMREngine();
+                        engine.SentToast("Washing Machine"); //TODO: specific device.
+                        engine = null;
+
+                        //TODO: Stop timer
+                    }
+                    UpdateTimerDisplay();
+                    
                 }
-
-                UpdateTimerDisplay();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        private void UpdateTimerDisplay()
-        {
-            try
-            {
-                this.ApplTime.Text = mTimerTime.Minutes.ToString();
-                this.Seconds.Value = mTimerTime.Seconds;
+                else
+                {
+                    //TODO: Stop timer
+                }
             }
             catch (Exception)
             {
@@ -88,6 +93,19 @@ namespace ApplianceTMR
                 }
 
                 UpdateTimerDisplay();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        private void UpdateTimerDisplay()
+        {
+            try
+            {
+                this.ApplTime.Text = mTimerTime.Minutes.ToString();
+                this.Seconds.Value = mTimerTime.Seconds;
             }
             catch (Exception)
             {
