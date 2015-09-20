@@ -33,9 +33,11 @@
             </Grid.ColumnDefinitions>
 
             <AppBarButton Name="abTimeDown" Grid.Row="0" Grid.Column="0" Icon="Back" IsCompact="True" VerticalAlignment="Center"  Click="abTimeDown_Click"/>
-            <TextBlock Name="ApplTime" Grid.Row="0" Grid.Column="1" Text="0" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="88"/>
+            <TextBlock Name="ApplTime" Grid.Row="0" Grid.Column="1" Text="10" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="80" Tapped="ApplTime_Tapped" />
+
             <AppBarButton Name="abTimeUp" Grid.Row="0" Grid.Column="2" Icon="Forward" IsCompact="True" VerticalAlignment="Center" Click="abTimeUp_Click" />
-            <TextBlock Name="ApplStartTime" Grid.Row="2"  Grid.Column="0" Grid.ColumnSpan="3" Text="Press To Start" TextAlignment="Center" FontSize="30"/>
+            <TextBlock Name="ApplStartTime" Grid.Row="2"  Grid.Column="0" Grid.ColumnSpan="3" Text="Press To Start" Opacity="0"  TextAlignment="Center" FontSize="30"/>
+            <ProgressBar Name="Seconds" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Width="294" Height="42" Margin="0,0,0,8" Maximum="60" Value="8" Foreground="White" />
         </Grid>        
     </Grid>
 </UserControl>

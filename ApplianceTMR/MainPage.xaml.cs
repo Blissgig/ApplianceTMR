@@ -70,10 +70,14 @@ namespace ApplianceTMR
 
                 
                 Storyboard AddTile = new Storyboard();
+                QuadraticEase ease = new QuadraticEase();
+                ease.EasingMode = EasingMode.EaseIn;
+                
                 DoubleAnimation MoveAnimation = new DoubleAnimation();
-                MoveAnimation.Duration = new Duration(TimeSpan.FromMilliseconds(400));
+                MoveAnimation.Duration = new Duration(TimeSpan.FromMilliseconds(250));
                 MoveAnimation.From = this.ActualHeight;
                 MoveAnimation.To = (mbTimerCount * dSize);
+                MoveAnimation.EasingFunction = ease;
 
                 Storyboard.SetTarget(MoveAnimation, timerTile);
                 Storyboard.SetTargetProperty(MoveAnimation, "(Canvas.Top)");
@@ -113,15 +117,12 @@ namespace ApplianceTMR
             {
                 string appName = "ApplianceTMR";
                 var version = Package.Current.Id.Version;
-                string appVersion = String.Format("{0}.{1}.{2}.{3}",
-                    version.Major, version.Minor, version.Build, version.Revision);
                 
-
                 string Message =
                     "Site: Blissgig.com" + Environment.NewLine +
                     "Contact: Blissgig@gmail.com" + Environment.NewLine +
                     "Copyright 2015 James Rose" + Environment.NewLine +
-                    "Version: " + appVersion;
+                    "Version: " + String.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision); ;
 
 
                 MessageDialog messageDialog = new MessageDialog(Message, appName);

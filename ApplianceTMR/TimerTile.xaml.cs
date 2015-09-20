@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
+
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
 namespace ApplianceTMR
@@ -20,6 +21,7 @@ namespace ApplianceTMR
     public sealed partial class TimerTile : UserControl
     {
         private TimeSpan mTimerTime;
+        
 
         public TimerTile()
         {
@@ -40,11 +42,33 @@ namespace ApplianceTMR
             }
         }
 
+        private void TimerStartStop()
+        {
+            try
+            {
+                //TODO: Bool if running
+
+                mTimerTime = mTimerTime.Subtract(new TimeSpan(0, 0, 1));
+
+                if (mTimerTime.Seconds == 0)
+                {
+                    mTimerTime = mTimerTime.Subtract(new TimeSpan(0, 1, 0));
+                }
+
+                UpdateTimerDisplay();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         private void UpdateTimerDisplay()
         {
             try
             {
                 this.ApplTime.Text = mTimerTime.Minutes.ToString();
+                this.Seconds.Value = mTimerTime.Seconds;
             }
             catch (Exception)
             {
@@ -81,6 +105,9 @@ namespace ApplianceTMR
             UpdateTimer(new TimeSpan(0, 1, 0));
         }
 
-
+        private void ApplTime_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            TimerStartStop();
+        }
     }
 }
