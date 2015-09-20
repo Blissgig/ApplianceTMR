@@ -62,7 +62,7 @@ namespace ApplianceTMR
                     if (mTimerTime.TotalSeconds == 0)
                     {
                         ATMREngine engine = new ATMREngine();
-                        engine.SentToast("Washing Machine"); //TODO: specific device.
+                        engine.SentToast("Appliance TMR", "Washing Machine Done"); //TODO: specific device.
                         engine = null;
 
                         //TODO: Stop timer

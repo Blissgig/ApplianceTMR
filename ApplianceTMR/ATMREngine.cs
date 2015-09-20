@@ -33,7 +33,7 @@ namespace ApplianceTMR
         /// Code found here.  Just want to send a notification and this does it, nice and simple.
         /// https://code.msdn.microsoft.com/windowsapps/Action-Center-Quickstart-b15089f2/sourcecode?fileId=111808&pathId=298223712
         /// </summary>
-        public void SentToast(string Message)
+        public void SentToast(string Title, string Body)
         {
             try
             {
@@ -43,7 +43,7 @@ namespace ApplianceTMR
                     // Each time we run this code, we'll append the count (toastIndex in this example) to the message
                     // so that it can be seen as a unique message in the action center. This is not mandatory - we
                     // do it here for educational purposes.
-                    ToastNotification toast = CreateTextOnlyToast(Message, String.Format("message {0}", toastIndex));
+                    ToastNotification toast = CreateTextOnlyToast(Title, Body); 
 
                     // Optional. Setting an expiration time on a toast notification defines the maximum
                     // time the notification will be displayed in action center before it expires and is removed. 
