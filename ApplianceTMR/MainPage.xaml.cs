@@ -57,15 +57,15 @@ namespace ApplianceTMR
             {
                 this.NewTimer.IsEnabled = false; //To insure that that multiple timers are started at the same time... may remove this.
 
+                ATMREngine engine = new ATMREngine();
+
                 AppBar dBottomAppBar = this.BottomAppBar; 
 
                 double dSize = Convert.ToDouble((this.ActualHeight - dBottomAppBar.ActualHeight) / 3);
 
-                TimerTile timerTile = new TimerTile();
-
+                TimerTile timerTile = new TimerTile(new TimeSpan(0, 8, 0), engine.TileColor);
                 timerTile.Width = this.ActualWidth;
                 timerTile.Height = dSize;
-                timerTile.SetDefaults(new TimeSpan(0, 8, 0));
                 this.Timers.Children.Add(timerTile);
 
                 

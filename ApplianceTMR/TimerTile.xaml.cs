@@ -29,11 +29,15 @@ namespace ApplianceTMR
             this.InitializeComponent();
         }
 
-        public void SetDefaults(TimeSpan Time)
+        public TimerTile(TimeSpan Time, SolidColorBrush TileColor)
         {
+            this.InitializeComponent();
+
             try
             {
                 mTimerTime = Time;
+
+                this.TileBase.Background = TileColor;
 
                 UpdateTimerDisplay();
             }
@@ -42,7 +46,7 @@ namespace ApplianceTMR
                 throw;
             }
         }
-
+        
         private void TimerStartStop()
         {
             try

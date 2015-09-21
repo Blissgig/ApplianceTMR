@@ -7,9 +7,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     d:DesignHeight="160"
-    d:DesignWidth="480">
+    d:DesignWidth="480"
+    >
     
-    <Grid Background="DarkBlue" Margin="8">
+    <Grid Name="TileBase" Margin="8">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
@@ -19,7 +20,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Image Name="ApplIcon" Grid.Row="0" Grid.Column="0" Margin="8" Source="/Assets/Washing-Machine.png" />
+        <Image Name="ApplIcon" Grid.Row="0" Grid.Column="0" Margin="8" Source="/Assets/Washing_Machine.png" />
         <Grid Name="Details"  Grid.Row="0" Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -36,8 +37,8 @@
             <TextBlock Name="ApplTime" Grid.Row="0" Grid.Column="1" Text="10" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="80" Tapped="ApplTime_Tapped" />
 
             <AppBarButton Name="abTimeUp" Grid.Row="0" Grid.Column="2" Icon="Forward" IsCompact="True" VerticalAlignment="Center" Click="abTimeUp_Click" />
-            <TextBlock Name="ApplStartTime" Grid.Row="2"  Grid.Column="0" Grid.ColumnSpan="3" Text="Press To Start" Opacity="0"  TextAlignment="Center" FontSize="30"/>
-            <ProgressBar Name="Seconds" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Width="294" Height="42" Margin="0,0,0,8" Maximum="60" Value="8" Foreground="White" />
+            <TextBlock Name="ApplStartTime" Grid.Row="2"  Grid.Column="0" Grid.ColumnSpan="3" Text="Start" Opacity="1"  TextAlignment="Center" FontSize="30"/>
+            <ProgressBar Name="Seconds" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Width="294" Height="42" Margin="0,0,0,8" Maximum="60" Value="8" Foreground="White" Opacity="0" />
         </Grid>        
     </Grid>
 </UserControl>

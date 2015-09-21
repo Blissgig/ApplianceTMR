@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
+using Windows.UI.Xaml.Media;
 
 namespace ApplianceTMR
 {
@@ -58,6 +59,14 @@ namespace ApplianceTMR
     class ATMREngine
     {
         private int toastIndex = 1;
+        private SolidColorBrush mscbTileColor = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 49, 123, 193));
+
+
+        public SolidColorBrush TileColor
+        {
+            get {return mscbTileColor;}
+        }
+
 
         public static bool CanSendToasts()
         {
@@ -71,6 +80,7 @@ namespace ApplianceTMR
 
             return bReturn;
         }
+
 
         /// <summary>
         /// Code found here.  Just want to send a notification and this does it, nice and simple.
