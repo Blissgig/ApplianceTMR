@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Data.Xml.Dom;
@@ -8,6 +9,49 @@ using Windows.UI.Notifications;
 
 namespace ApplianceTMR
 {
+    public class EnumStringAttribute : Attribute
+    {
+        private string msValue;
+
+        public EnumStringAttribute(string Value)
+        {
+            this.msValue = Value;
+        }
+
+        public string StringValue
+        {
+            get { return msValue; }
+            set { msValue = value; }
+        }
+    }
+
+    public class EnumByteAttribute : Attribute
+    {
+        private byte mbValue = 0;
+
+        public EnumByteAttribute(byte Value)
+        {
+            this.mbValue = Value;
+        }
+
+
+    }
+
+    public class Appliance
+    {
+        public enum ApplianceType
+        {
+            [EnumStringAttribute("Clothes Dryer")]
+            ClothesDryer,
+            [EnumStringAttribute("Stove")]
+            Stove,
+            [EnumStringAttribute("Washing Machine")]
+            WashingMachine,
+            
+        }
+
+
+    }
     /// <summary>
     /// Functions that should be outside the UI.
     /// </summary>
@@ -27,7 +71,6 @@ namespace ApplianceTMR
 
             return bReturn;
         }
-
 
         /// <summary>
         /// Code found here.  Just want to send a notification and this does it, nice and simple.
@@ -85,6 +128,22 @@ namespace ApplianceTMR
             ToastNotification toast = new ToastNotification(toastXml);
 
             return toast;
+        }
+
+        public void SaveSetting(string Setting, string Value)
+        {
+            try
+            {
+                var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+
+                localSettings.Values[Setting] = Value;
+
+                localSettings = null;
+            }
+            catch (Exception ex)
+            {
+                logException(ex);
+            }
         }
 
         public void logException(Exception ex)
