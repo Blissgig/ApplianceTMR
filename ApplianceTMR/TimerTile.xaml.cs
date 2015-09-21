@@ -12,7 +12,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Windows.UI.Notifications; //For toast
+using Windows.UI.Notifications;
+using Windows.UI.Xaml.Media.Imaging; //For toast
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -29,7 +30,10 @@ namespace ApplianceTMR
             this.InitializeComponent();
         }
 
-        public TimerTile(TimeSpan Time, SolidColorBrush TileColor)
+        public TimerTile(
+            TimeSpan Time, 
+            SolidColorBrush TileColor,
+            Image Icon)
         {
             this.InitializeComponent();
 
@@ -38,6 +42,8 @@ namespace ApplianceTMR
                 mTimerTime = Time;
 
                 this.TileBase.Background = TileColor;
+
+                this.ApplIcon.Source = Icon.Source;
 
                 UpdateTimerDisplay();
             }

@@ -15,15 +15,11 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
-using Windows.UI.Notifications;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=391641
 
 namespace ApplianceTMR
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class MainPage : Page
     {
         private byte mbTimerCount = 0;
@@ -58,12 +54,17 @@ namespace ApplianceTMR
                 this.NewTimer.IsEnabled = false; //To insure that that multiple timers are started at the same time... may remove this.
 
                 ATMREngine engine = new ATMREngine();
-
-                AppBar dBottomAppBar = this.BottomAppBar; 
-
+                AppBar dBottomAppBar = this.BottomAppBar;
+                Appliance.ApplianceType Type = Appliance.ApplianceType.Stove;
                 double dSize = Convert.ToDouble((this.ActualHeight - dBottomAppBar.ActualHeight) / 3);
 
-                TimerTile timerTile = new TimerTile(new TimeSpan(0, 8, 0), engine.TileColor);
+
+
+
+                TimerTile timerTile = new TimerTile(
+                    new TimeSpan(0, engine.ApplianceTime(Type), 0), 
+                    engine.TileColor,
+                    engine.ApplianceByType(Type));
                 timerTile.Width = this.ActualWidth;
                 timerTile.Height = dSize;
                 this.Timers.Children.Add(timerTile);
@@ -103,7 +104,16 @@ namespace ApplianceTMR
         {
             try
             {
-                //TODO
+                if ((string)Settings.Label == "Settings")
+                {
+                    Settings.Icon = new SymbolIcon(Symbol.Home);
+                    Settings.Label = "Home";
+                }
+                else
+                {
+                    Settings.Icon = new SymbolIcon(Symbol.Setting);
+                    Settings.Label = "Settings";
+                }  
             }
             catch (Exception ex)
             {

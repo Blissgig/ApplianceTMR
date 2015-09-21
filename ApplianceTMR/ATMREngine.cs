@@ -6,7 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace ApplianceTMR
 {
@@ -19,9 +21,10 @@ namespace ApplianceTMR
             this.msValue = Value;
         }
 
-        public string StringValue
+        public string Value
         {
             get { return msValue; }
+
             set { msValue = value; }
         }
     }
@@ -35,24 +38,45 @@ namespace ApplianceTMR
             this.mbValue = Value;
         }
 
+        public byte Value
+        {
+            get { return mbValue; }
 
+            set { mbValue = value; }
+        }
     }
-
+    
     public class Appliance
     {
         public enum ApplianceType
         {
+            //TODO: Get common times for these devices
             [EnumStringAttribute("Clothes Dryer")]
+            [EnumByteAttribute(60)]
             ClothesDryer,
+            [EnumStringAttribute("Egg Timer")]
+            [EnumByteAttribute(5)]
+            EggTimer,
+            [EnumStringAttribute("Refrigorator")]
+            [EnumByteAttribute(120)]
+            Fridge,
+            [EnumStringAttribute("Microwave")]
+            [EnumByteAttribute(15)]
+            Microwave,
+            [EnumStringAttribute("Oven")]
+            [EnumByteAttribute(25)]
+            Oven,
             [EnumStringAttribute("Stove")]
+            [EnumByteAttribute(30)]
             Stove,
+            [EnumStringAttribute("Television")]
+            [EnumByteAttribute(30)]
+            TV,
             [EnumStringAttribute("Washing Machine")]
-            WashingMachine,
-            
+            WashingMachine,   
         }
-
-
     }
+
     /// <summary>
     /// Functions that should be outside the UI.
     /// </summary>
@@ -67,6 +91,85 @@ namespace ApplianceTMR
             get {return mscbTileColor;}
         }
 
+        public Image ApplianceByType(Appliance.ApplianceType Type)
+        {
+            Image Return = new Image();
+            string sIcon = "Egg_Timer";
+
+            try
+            {
+                switch (Type)
+                {
+                    case Appliance.ApplianceType.ClothesDryer:
+                        sIcon = "Clothes-Dryer";
+                        break;
+
+                    case Appliance.ApplianceType.EggTimer:
+                        sIcon = "Egg_Timer";
+                        break;
+
+                    case Appliance.ApplianceType.Fridge:
+                        sIcon = "Fridge";
+                        break;
+
+                    case Appliance.ApplianceType.Microwave:
+                        sIcon = "Microwave";
+                        break;
+
+                    case Appliance.ApplianceType.Oven:
+                        sIcon = "Oven";
+                        break;
+
+                    case Appliance.ApplianceType.Stove:
+                        sIcon = "Stove";
+                        break;
+
+                    case Appliance.ApplianceType.TV:
+                        sIcon = "TV";
+                        break;
+
+                    case Appliance.ApplianceType.WashingMachine:
+                        sIcon = "Washing_Machine";
+                        break;
+                }
+
+                Return.Source = new BitmapImage(new Uri("ms-appx:///Assets/" + sIcon + ".png", UriKind.Absolute));
+            }
+            catch (Exception ex)
+            {
+                logException(ex);
+            }
+
+            return Return;
+        }
+
+        public byte ApplianceTime(Appliance.ApplianceType Type)
+        {
+            byte bReturn = 0;
+
+            try
+            {
+                Type type = Type.GetType();
+                
+                
+               //List<System.Reflection.FieldInfo> fieldInfo = type.GetType().GetRuntimeFields().ToList(); //Close but still wrong
+
+                //List<PropertyInfo> fields = type.GetRuntimeProperties().ToList(); // nothing came back
+
+                //System.Reflection.PropertyInfo fieldInfo = type.GetType().GetRuntimeProperty("EnumByteAttribute");
+
+                //DisplayAttribute attribute = value.GetType()
+                //            .GetField(value.ToString())
+
+                
+            }
+            catch (Exception ex)
+            {
+                logException(ex);
+            }
+
+            return bReturn;
+        }
 
         public static bool CanSendToasts()
         {
