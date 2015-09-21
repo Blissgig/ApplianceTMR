@@ -64,7 +64,7 @@ namespace ApplianceTMR
                 TimerTile timerTile = new TimerTile(
                     new TimeSpan(0, engine.ApplianceTime(Type), 0), 
                     engine.TileColor,
-                    engine.ApplianceByType(Type));
+                    engine.ApplianceIconByType(Type));
                 timerTile.Width = this.ActualWidth;
                 timerTile.Height = dSize;
                 this.Timers.Children.Add(timerTile);

@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Data.Xml.Dom;
+using Windows.Storage;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -48,32 +49,64 @@ namespace ApplianceTMR
     
     public class Appliance
     {
+        private string msFullName = "Egg Timer";
+        private string msPhrase = " has completed";
+        private byte mbMinutes = 5;
+        private ApplianceType mtType = ApplianceType.EggTimer;
+
+        public Appliance()
+        { }
+
+        public Appliance(
+            ApplianceType Type, 
+            string FullName, 
+            string Phrase,
+            byte Minutes)
+        {
+            this.FullName = FullName;
+            this.Phrase = Phrase;
+            this.Minutes = Minutes;
+            this.Type = Type;
+        }
+
         public enum ApplianceType
         {
-            //TODO: Get common times for these devices
-            [EnumStringAttribute("Clothes Dryer")]
-            [EnumByteAttribute(60)]
             ClothesDryer,
-            [EnumStringAttribute("Egg Timer")]
-            [EnumByteAttribute(5)]
             EggTimer,
-            [EnumStringAttribute("Refrigorator")]
-            [EnumByteAttribute(120)]
             Fridge,
-            [EnumStringAttribute("Microwave")]
-            [EnumByteAttribute(15)]
             Microwave,
-            [EnumStringAttribute("Oven")]
-            [EnumByteAttribute(25)]
             Oven,
-            [EnumStringAttribute("Stove")]
-            [EnumByteAttribute(30)]
             Stove,
-            [EnumStringAttribute("Television")]
-            [EnumByteAttribute(30)]
             TV,
-            [EnumStringAttribute("Washing Machine")]
             WashingMachine,   
+        }
+
+        public string FullName
+        {
+            get { return msFullName; }
+
+            set { msFullName = value; }
+        }
+
+        public byte Minutes
+        {
+            get { return mbMinutes; }
+
+            set { mbMinutes = value; }
+        }
+
+        public ApplianceType Type
+        {
+            get { return mtType; }
+
+            set { mtType = value; }
+        }
+
+        public string Phrase
+        {
+            get { return msPhrase; }
+
+            set { msPhrase = value; }
         }
     }
 
@@ -85,13 +118,13 @@ namespace ApplianceTMR
         private int toastIndex = 1;
         private SolidColorBrush mscbTileColor = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 49, 123, 193));
 
-
+        
         public SolidColorBrush TileColor
         {
             get {return mscbTileColor;}
         }
 
-        public Image ApplianceByType(Appliance.ApplianceType Type)
+        public Image ApplianceIconByType(Appliance.ApplianceType Type)
         {
             Image Return = new Image();
             string sIcon = "Egg_Timer";
@@ -149,19 +182,35 @@ namespace ApplianceTMR
 
             try
             {
-                Type type = Type.GetType();
+                bool bFound = false;
+                List<string> ApplianceValues = new List<string>();
+                var tempValues = ((string[])ApplicationData.Current.LocalSettings.Values["ApplianceValues"]);
+
+                if (tempValues != null)
+                {
+                    ApplianceValues = tempValues.ToList();
+
+                    if (ApplianceValues.Count > 0)
+                    {
+                        string sValue = ApplianceValues.Find(e => (e.IndexOf(Type.ToString()) > -1));
+
+                        if(sValue != null)
+                        {
+                            Int16 iStart = Convert.ToInt16(sValue.IndexOf(",") + 1);
+                            Int16 iEnd = Convert.ToInt16(sValue.IndexOf(",", iStart));
+
+                            bReturn = Convert.ToByte(sValue.Substring(iStart, iEnd));
+                        }
+                    }
+                }
                 
-                
-               //List<System.Reflection.FieldInfo> fieldInfo = type.GetType().GetRuntimeFields().ToList(); //Close but still wrong
 
-                //List<PropertyInfo> fields = type.GetRuntimeProperties().ToList(); // nothing came back
-
-                //System.Reflection.PropertyInfo fieldInfo = type.GetType().GetRuntimeProperty("EnumByteAttribute");
-
-                //DisplayAttribute attribute = value.GetType()
-                //            .GetField(value.ToString())
-
-                
+                if (bFound == false)
+                {
+                    Appliance appliance = ApplicationDefaultData(Type);
+                    ApplianceValues.Add(appliance.Type.ToString() + "," + appliance.Minutes.ToString() + "," + appliance.FullName + "," +appliance.Phrase);
+                    ApplicationData.Current.LocalSettings.Values["ApplianceValues"] = ApplianceValues.ToArray();
+                }                
             }
             catch (Exception ex)
             {
@@ -169,6 +218,74 @@ namespace ApplianceTMR
             }
 
             return bReturn;
+        }
+
+
+        private Appliance ApplicationDefaultData(Appliance.ApplianceType Type)
+        {
+            Appliance appliance = new Appliance(Type, "Egg Timer", "Timer dinged", 8);
+
+            try
+            {
+                switch (Type)
+                {
+                    case Appliance.ApplianceType.ClothesDryer:
+                        appliance.FullName = "Clothes Dryer";
+                        appliance.Phrase = "The clothes are dry";
+                        appliance.Minutes = 38;
+                        break;
+
+                    case Appliance.ApplianceType.EggTimer:
+                        appliance.FullName = "Egg Timer";
+                        appliance.Phrase = "Timer dinged";
+                        appliance.Minutes = 5;
+                        break;
+
+                    case Appliance.ApplianceType.Fridge:
+                        appliance.FullName = "Refrigerator";
+                        appliance.Phrase = "Somethings chilling";
+                        appliance.Minutes = 120;
+                        break;
+
+                    case Appliance.ApplianceType.Microwave:
+                        appliance.FullName = "Microwave";
+                        appliance.Phrase = "Atomic Beep Beep";
+                        appliance.Minutes = 10;
+                        break;
+
+                    case Appliance.ApplianceType.Oven:
+                        appliance.FullName = "Oven";
+                        appliance.Phrase = "Oven is hot";
+                        appliance.Minutes = 25;
+                        break;
+
+                    case Appliance.ApplianceType.Stove:
+                        appliance.FullName = "Stove";
+                        appliance.Phrase = "Stove need attention";
+                        appliance.Minutes = 15;
+                        break;
+
+                    case Appliance.ApplianceType.TV:
+                        appliance.FullName = "TV / Computer";
+                        appliance.Phrase = "Pay attention to this device";
+                        appliance.Minutes = 60;
+                        break;
+
+                    case Appliance.ApplianceType.WashingMachine:
+                        appliance.FullName = "Washing Machine";
+                        appliance.Phrase = "The wash is done.";
+                        appliance.Minutes = 60;
+                        break;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                logException(ex);
+            }
+
+            return appliance;
         }
 
         public static bool CanSendToasts()
