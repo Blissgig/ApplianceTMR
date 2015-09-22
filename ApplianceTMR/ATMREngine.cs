@@ -13,7 +13,10 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
+using Windows.UI.Input;
 using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Popups;
+using Windows.ApplicationModel; //For toast
 
 namespace ApplianceTMR
 {
@@ -53,24 +56,35 @@ namespace ApplianceTMR
     
     public class Appliance
     {
+        private string msName = "GUID";
         private string msFullName = "Egg Timer";
         private string msPhrase = "Timer dinged";
-        private byte mbMinutes = 5;
+        private TimeSpan mtsTime = new TimeSpan(0, 5, 0);
         private ApplianceType mtType = ApplianceType.EggTimer;
 
         public Appliance()
-        { }
+        {
+            this.Name = "TimerTile" + Guid.NewGuid().ToString().Replace("-", "");
+        }
 
         public Appliance(
             ApplianceType Type, 
             string FullName, 
             string Phrase,
-            byte Minutes)
+            TimeSpan Time)
         {
+            this.Name = "TimerTile" + Guid.NewGuid().ToString().Replace("-", "");
             this.FullName = FullName;
             this.Phrase = Phrase;
-            this.Minutes = Minutes;
+            this.mtsTime = Time;
             this.Type = Type;
+        }
+
+        public string Name
+        {
+            get { return msName; }
+
+            set { msName = value; }
         }
 
         public enum ApplianceType
@@ -92,11 +106,11 @@ namespace ApplianceTMR
             set { msFullName = value; }
         }
 
-        public byte Minutes
+        public TimeSpan Time
         {
-            get { return mbMinutes; }
+            get { return mtsTime; }
 
-            set { mbMinutes = value; }
+            set { mtsTime = value; }
         }
 
         public ApplianceType Type
@@ -120,8 +134,6 @@ namespace ApplianceTMR
     class ATMREngine
     {
         #region Private Members
-        private byte mbTimerCount = 0;
-
         private List<Appliance> Appliances = new List<Appliance>();
         private bool mbHomePage = true;
         private SolidColorBrush mscbTileColor = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 49, 123, 193));
@@ -139,8 +151,7 @@ namespace ApplianceTMR
         public ATMREngine(MainPage mainPage)
         {
             this.mMainPage = mainPage;
-            //this.mMainPage
-        }
+         }
 
         public Appliance ApplianceByType(Appliance.ApplianceType Type)
         {
@@ -163,6 +174,7 @@ namespace ApplianceTMR
                         if (sValue != null)
                         {
                             appliance = ApplianceFromCSV(sValue);
+                            bFound = true;
                         }
                     }
                 }
@@ -171,7 +183,7 @@ namespace ApplianceTMR
                 if (bFound == false)
                 {
                     appliance = ApplianceDefaults(Type);
-                    ApplianceValues.Add(appliance.Type.ToString() + "," + appliance.Minutes.ToString() + "," + appliance.FullName + "," + appliance.Phrase);
+                    ApplianceValues.Add(appliance.Type.ToString() + "," + appliance.Time.TotalMinutes.ToString() + "," + appliance.FullName + "," + appliance.Phrase);
                     ApplicationData.Current.LocalSettings.Values["ApplianceValues"] = ApplianceValues.ToArray();
                 }
             }
@@ -294,7 +306,7 @@ namespace ApplianceTMR
                 string[] Values = Input.Split(',');
 
                 appliance.Type = this.ApplianceTypeFromType(Values[0]);
-                appliance.Minutes = Convert.ToByte(Values[1]);
+                appliance.Time = new TimeSpan(0, Convert.ToInt16(Values[1]), 0);
                 appliance.FullName = Values[2];
                 appliance.Phrase = Values[3];
 
@@ -309,7 +321,8 @@ namespace ApplianceTMR
 
         private Appliance ApplianceDefaults(Appliance.ApplianceType Type)
         {
-            Appliance appliance = new Appliance(Type, "Egg Timer", "Timer dinged", 8);
+            Appliance appliance = new Appliance();
+            appliance.Type = Type;
 
             try
             {
@@ -318,49 +331,49 @@ namespace ApplianceTMR
                     case Appliance.ApplianceType.ClothesDryer:
                         appliance.FullName = "Clothes Dryer";
                         appliance.Phrase = "The clothes are dry";
-                        appliance.Minutes = 38;
+                        appliance.Time = new TimeSpan(0, 38, 0);
                         break;
 
                     case Appliance.ApplianceType.EggTimer:
                         appliance.FullName = "Egg Timer";
                         appliance.Phrase = "Timer dinged";
-                        appliance.Minutes = 5;
+                        appliance.Time = new TimeSpan(0, 5, 0);
                         break;
 
                     case Appliance.ApplianceType.Fridge:
                         appliance.FullName = "Refrigerator";
                         appliance.Phrase = "Somethings chilling";
-                        appliance.Minutes = 120;
+                        appliance.Time = new TimeSpan(0, 120, 0);
                         break;
 
                     case Appliance.ApplianceType.Microwave:
                         appliance.FullName = "Microwave";
                         appliance.Phrase = "Atomic Beep Beep";
-                        appliance.Minutes = 10;
+                        appliance.Time = new TimeSpan(0, 10, 0);
                         break;
 
                     case Appliance.ApplianceType.Oven:
                         appliance.FullName = "Oven";
                         appliance.Phrase = "Oven is hot";
-                        appliance.Minutes = 25;
+                        appliance.Time = new TimeSpan(0, 25, 0);
                         break;
 
                     case Appliance.ApplianceType.Stove:
                         appliance.FullName = "Stove";
                         appliance.Phrase = "Stove needs attention";
-                        appliance.Minutes = 15;
+                        appliance.Time = new TimeSpan(0, 15, 0);
                         break;
 
                     case Appliance.ApplianceType.TV:
                         appliance.FullName = "TV / Computer";
                         appliance.Phrase = "Pay attention to this device";
-                        appliance.Minutes = 60;
+                        appliance.Time = new TimeSpan(1, 0, 0);
                         break;
 
                     case Appliance.ApplianceType.WashingMachine:
                         appliance.FullName = "Washing Machine";
                         appliance.Phrase = "The wash is done";
-                        appliance.Minutes = 60;
+                        appliance.Time = new TimeSpan(1, 0, 0);
                         break;
                 }
 
@@ -421,8 +434,6 @@ namespace ApplianceTMR
                     Storyboard.SetTargetProperty(FadeIn, "(Canvas.Opacity)");
 
                     sb.Children.Add(FadeIn);
-
-                    mbTimerCount += 1; //Reset, temp
                 }
 
                 if (sb.Children.Count > 0)
@@ -443,7 +454,7 @@ namespace ApplianceTMR
                 string[] types = Enum.GetNames(typeof(Appliance.ApplianceType)); 
                 foreach (string type in types)
                 {
-                    TimerLoad(this.ApplianceTypeFromType(type));
+                    TimerNew(this.ApplianceTypeFromType(type));
                 } 
             }
             catch (Exception ex)
@@ -452,24 +463,22 @@ namespace ApplianceTMR
             }
         }
 
-        public void TimerLoad(Appliance.ApplianceType Type)
+        public void TimerNew(Appliance.ApplianceType Type)
         {
             try
             {
                 this.mMainPage.NewTimer.IsEnabled = false;
 
                 AppBar dBottomAppBar = this.mMainPage.BottomAppBar;
+                Appliance newAppliance = ApplianceByType(Type);
                 double dSize = Convert.ToDouble((this.mMainPage.ActualHeight - (dBottomAppBar.ActualHeight * 2)) / 3);
-
-
-                TimerTile timerTile = new TimerTile(
-                    new TimeSpan(0, this.ApplianceByType(Type).Minutes, 0), 
-                    this.TileColor,
-                    this.ApplianceIconFromType(Type));
+                TimerTile timerTile = new TimerTile(this.TileColor, this.ApplianceIconFromType(Type), mMainPage);
                 timerTile.Width = this.mMainPage.ActualWidth;
                 timerTile.Height = dSize;
+                timerTile.Name = newAppliance.Name;
+                timerTile.ApplianceTime.Text = "1 hour" + Environment.NewLine + "8 mins";
                 this.mMainPage.Timers.Children.Add(timerTile);
-
+                Appliances.Add(newAppliance);
                 
                 Storyboard AddTile = new Storyboard();
                 QuadraticEase ease = new QuadraticEase();
@@ -478,7 +487,7 @@ namespace ApplianceTMR
                 DoubleAnimation MoveAnimation = new DoubleAnimation();
                 MoveAnimation.Duration = new Duration(TimeSpan.FromMilliseconds(250));
                 MoveAnimation.From = this.mMainPage.ActualHeight;
-                MoveAnimation.To = (mbTimerCount * dSize);
+                MoveAnimation.To = (Appliances.Count * dSize);
                 MoveAnimation.EasingFunction = ease;
 
                 Storyboard.SetTarget(MoveAnimation, timerTile);
@@ -490,8 +499,38 @@ namespace ApplianceTMR
                     this.mMainPage.NewTimer.IsEnabled = true;
                 };
                 AddTile.Begin();
+            }
+            catch (Exception ex)
+            {
+                logException(ex);
+            }
+        }
 
-                mbTimerCount += 1; //TODO: need a better process
+        public void TimerSwipe(
+            TimerTile timerTile,
+            PointerPoint StartingPoint,
+            PointerPoint EndingPoint)
+        {
+            try
+            {
+                //Make sure the Y value is not too large. If so the user is scrolling up/down.
+                if ((StartingPoint.Position.Y + EndingPoint.Position.Y) > timerTile.ActualHeight)
+                {
+                    return;
+                }
+
+
+                if (StartingPoint.Position.X < timerTile.ColumnIcon.Width.Value)
+                {
+                    //Affecting Icon
+                    string Icon = "H";
+                }
+                else
+                {
+                    //Affecting Time
+                    string Time = "T";
+                }
+
             }
             catch (Exception ex)
             {
@@ -510,8 +549,6 @@ namespace ApplianceTMR
 
                     TimersUnload();
 
-                    mbTimerCount = 0;
-
                     TimersLoadDefault();
                 }
                 else
@@ -528,6 +565,29 @@ namespace ApplianceTMR
             {
                 logException(ex);
             }
+        }
+
+        public async void AboutSelected()
+        {
+            try 
+	        {
+                string appName = "Appliance TMR";
+                var version = Package.Current.Id.Version;
+
+                string Message =
+                    "Site: Blissgig.com" + Environment.NewLine +
+                    "Contact: Blissgig@gmail.com" + Environment.NewLine +
+                    "Copyright 2015 James Rose" + Environment.NewLine +
+                    "Version: " + String.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision); ;
+
+
+                MessageDialog messageDialog = new MessageDialog(Message, appName);
+                await messageDialog.ShowAsync();
+	        }
+	        catch (Exception ex)
+	        {
+                logException(ex);
+	        }
         }
 
         public void TouchStarted(Windows.UI.Input.PointerPoint StartingPoint)

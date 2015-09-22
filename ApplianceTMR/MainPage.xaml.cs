@@ -7,13 +7,11 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=391641
@@ -22,15 +20,16 @@ namespace ApplianceTMR
 {
     public sealed partial class MainPage : Page
     {
-        private ATMREngine mEngine;
+        private ATMREngine mTimerEngine;
 
+        
         public MainPage()
         {
             this.InitializeComponent();
 
             this.NavigationCacheMode = NavigationCacheMode.Required;
 
-            mEngine = new ATMREngine(this);
+            mTimerEngine = new ATMREngine(this);
         }
 
         /// <summary>
@@ -51,51 +50,27 @@ namespace ApplianceTMR
 
         private void NewTimer_Click(object sender, RoutedEventArgs e)
         {
-            mEngine.TimerLoad(Appliance.ApplianceType.Stove);
+            mTimerEngine.TimerNew(Appliance.ApplianceType.Stove);
         }
 
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
-            mEngine.SettingsSelected();
+            mTimerEngine.SettingsSelected();
         }
 
-        private async void About_Click(object sender, RoutedEventArgs e)
+        private void About_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                string appName = "Appliance TMR";
-                var version = Package.Current.Id.Version;
-                
-                string Message =
-                    "Site: Blissgig.com" + Environment.NewLine +
-                    "Contact: Blissgig@gmail.com" + Environment.NewLine +
-                    "Copyright 2015 James Rose" + Environment.NewLine +
-                    "Version: " + String.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision); ;
-
-
-                MessageDialog messageDialog = new MessageDialog(Message, appName);
-                await messageDialog.ShowAsync();
-            }
-            catch (Exception ex)
-            {
-                logException(ex);
-            }
+            mTimerEngine.AboutSelected();
         }
 
         private void Timers_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            mEngine.TouchStarted(e.GetCurrentPoint(this));
+            mTimerEngine.TouchStarted(e.GetCurrentPoint(this));
         }
 
         private void Timers_PointerExited(object sender, PointerRoutedEventArgs e)
         {
-            mEngine.TouchCompleted(e.GetCurrentPoint(this));
+            mTimerEngine.TouchCompleted(e.GetCurrentPoint(this));
         }
-
-        private void logException(Exception ex)
-        {
-            mEngine.logException(ex);
-        }
-
     }
 }
