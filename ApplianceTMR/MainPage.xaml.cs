@@ -23,6 +23,8 @@ namespace ApplianceTMR
     public sealed partial class MainPage : Page
     {
         private byte mbTimerCount = 0;
+        private bool mbHomePage = true;
+
 
         public MainPage()
         {
@@ -59,12 +61,10 @@ namespace ApplianceTMR
                 double dSize = Convert.ToDouble((this.ActualHeight - dBottomAppBar.ActualHeight) / 3);
 
 
-
-
                 TimerTile timerTile = new TimerTile(
                     new TimeSpan(0, engine.ApplianceTime(Type), 0), 
                     engine.TileColor,
-                    engine.ApplianceIconByType(Type));
+                    engine.ApplianceIconFromType(Type));
                 timerTile.Width = this.ActualWidth;
                 timerTile.Height = dSize;
                 this.Timers.Children.Add(timerTile);
@@ -104,16 +104,24 @@ namespace ApplianceTMR
         {
             try
             {
-                if ((string)Settings.Label == "Settings")
+                ATMREngine engine = new ATMREngine();
+
+                if (mbHomePage == true)
                 {
                     Settings.Icon = new SymbolIcon(Symbol.Home);
                     Settings.Label = "Home";
+
+                    engine.TimersUnload(this.Timers);
                 }
                 else
                 {
                     Settings.Icon = new SymbolIcon(Symbol.Setting);
                     Settings.Label = "Settings";
-                }  
+
+                    engine.TimersReload(this.Timers);
+                }
+
+                mbHomePage = !mbHomePage;
             }
             catch (Exception ex)
             {
@@ -125,7 +133,7 @@ namespace ApplianceTMR
         {
             try
             {
-                string appName = "ApplianceTMR";
+                string appName = "Appliance TMR";
                 var version = Package.Current.Id.Version;
                 
                 string Message =
