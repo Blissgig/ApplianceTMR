@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Windows.Data.Xml.Dom;
 using Windows.Storage;
 using Windows.UI.Notifications;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
@@ -117,6 +118,7 @@ namespace ApplianceTMR
     class ATMREngine
     {
         private int toastIndex = 1;
+        private byte mbTimerCount = 0;
         private SolidColorBrush mscbTileColor = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 49, 123, 193));
 
         
@@ -125,9 +127,51 @@ namespace ApplianceTMR
             get {return mscbTileColor;}
         }
 
-        public byte ApplianceTime(Appliance.ApplianceType Type)
+        //public byte ApplianceTime(Appliance.ApplianceType Type)
+        //{
+        //    byte bReturn = 0;
+
+        //    try
+        //    {
+        //        bool bFound = false;
+        //        List<string> ApplianceValues = new List<string>();
+        //        var tempValues = ((string[])ApplicationData.Current.LocalSettings.Values["ApplianceValues"]);
+
+        //        if (tempValues != null)
+        //        {
+        //            ApplianceValues = tempValues.ToList();
+
+        //            if (ApplianceValues.Count > 0)
+        //            {
+        //                string sValue = ApplianceValues.Find(e => (e.IndexOf(Type.ToString()) > -1));
+
+        //                if (sValue != null)
+        //                {
+        //                    Appliance appl = ApplianceFromCSV(sValue);
+        //                    bReturn = appl.Minutes;
+        //                }
+        //            }
+        //        }
+
+
+        //        if (bFound == false)
+        //        {
+        //            Appliance appliance = ApplianceDefauls(Type);
+        //            ApplianceValues.Add(appliance.Type.ToString() + "," + appliance.Minutes.ToString() + "," + appliance.FullName + "," + appliance.Phrase);
+        //            ApplicationData.Current.LocalSettings.Values["ApplianceValues"] = ApplianceValues.ToArray();
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        logException(ex);
+        //    }
+
+        //    return bReturn;
+        //}
+
+        public Appliance ApplianceByType(Appliance.ApplianceType Type)
         {
-            byte bReturn = 0;
+            Appliance appliance = new Appliance();
 
             try
             {
@@ -145,8 +189,7 @@ namespace ApplianceTMR
 
                         if (sValue != null)
                         {
-                            Appliance appl = ApplianceFromCSV(sValue);
-                            bReturn = appl.Minutes;
+                            appliance = ApplianceFromCSV(sValue);
                         }
                     }
                 }
@@ -154,7 +197,7 @@ namespace ApplianceTMR
 
                 if (bFound == false)
                 {
-                    Appliance appliance = ApplianceDefauls(Type);
+                    appliance = ApplianceDefaults(Type);
                     ApplianceValues.Add(appliance.Type.ToString() + "," + appliance.Minutes.ToString() + "," + appliance.FullName + "," + appliance.Phrase);
                     ApplicationData.Current.LocalSettings.Values["ApplianceValues"] = ApplianceValues.ToArray();
                 }
@@ -164,7 +207,7 @@ namespace ApplianceTMR
                 logException(ex);
             }
 
-            return bReturn;
+            return appliance;
         }
 
         public Image ApplianceIconFromType(Appliance.ApplianceType Type)
@@ -219,6 +262,56 @@ namespace ApplianceTMR
             return Return;
         }
 
+        private Appliance.ApplianceType ApplianceTypeFromType(string Type)
+        {
+            Appliance.ApplianceType ReturnType = Appliance.ApplianceType.EggTimer;
+
+            try
+            {
+                switch (Type.ToLower())
+                {
+                    case "clothesdryer":
+                        ReturnType= Appliance.ApplianceType.ClothesDryer;
+                        break;
+
+                    case "eggtimer":
+                        ReturnType = Appliance.ApplianceType.EggTimer;
+                        break;
+
+                    case "fridge":
+                        ReturnType = Appliance.ApplianceType.Fridge;
+                        break;
+
+                    case "microwave":
+                        ReturnType = Appliance.ApplianceType.Microwave;
+                        break;
+
+                    case "oven":
+                        ReturnType = Appliance.ApplianceType.Oven;
+                        break;
+
+                    case "stove":
+                        ReturnType = Appliance.ApplianceType.Stove;
+                        break;
+
+                    case "tv":
+                        ReturnType = Appliance.ApplianceType.TV;
+                        break;
+
+                    case "washingmachine":
+                        ReturnType = Appliance.ApplianceType.WashingMachine;
+                        break;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logException(ex);
+            }
+
+            return ReturnType;
+        }
+
         private Appliance ApplianceFromCSV(string Input)
         {
             Appliance appliance = new Appliance();
@@ -227,42 +320,7 @@ namespace ApplianceTMR
             {
                 string[] Values = Input.Split(',');
 
-                
-                switch (Values[0].ToLower())
-                {
-                    case "clothesdryer":
-                        appliance.Type = Appliance.ApplianceType.ClothesDryer;
-                        break;
-
-                    case "eggtimer":
-                        appliance.Type = Appliance.ApplianceType.EggTimer;
-                        break;
-
-                    case "fridge":
-                        appliance.Type = Appliance.ApplianceType.Fridge;
-                        break;
-
-                    case "microwave":
-                        appliance.Type = Appliance.ApplianceType.Microwave;
-                        break;
-
-                    case "oven":
-                        appliance.Type = Appliance.ApplianceType.Oven;
-                        break;
-
-                    case "stove":
-                        appliance.Type = Appliance.ApplianceType.Stove;
-                        break;
-
-                    case "tv":
-                        appliance.Type = Appliance.ApplianceType.TV;
-                        break;
-
-                    case "washingmachine":
-                        appliance.Type = Appliance.ApplianceType.WashingMachine;
-                        break;
-
-                }
+                appliance.Type = this.ApplianceTypeFromType(Values[0]);
                 appliance.Minutes = Convert.ToByte(Values[1]);
                 appliance.FullName = Values[2];
                 appliance.Phrase = Values[3];
@@ -276,7 +334,7 @@ namespace ApplianceTMR
             return appliance;
         }
 
-        private Appliance ApplianceDefauls(Appliance.ApplianceType Type)
+        private Appliance ApplianceDefaults(Appliance.ApplianceType Type)
         {
             Appliance appliance = new Appliance(Type, "Egg Timer", "Timer dinged", 8);
 
@@ -396,6 +454,69 @@ namespace ApplianceTMR
                 {
                     sb.Begin();
                 }
+            }
+            catch (Exception ex)
+            {
+                logException(ex);
+            }
+        }
+
+        public void TimersLoadDefault(MainPage mainPage)
+        {
+            try
+            {
+                string[] types = Enum.GetNames(typeof(Appliance.ApplianceType)); 
+                foreach (string type in types)
+                {
+                    TimerLoad(mainPage, this.ApplianceTypeFromType(type));
+                } 
+            }
+            catch (Exception ex)
+            {
+                logException(ex);
+            }
+        }
+
+        public void TimerLoad(MainPage mainPage, Appliance.ApplianceType Type)
+        {
+            try
+            {
+                mainPage.NewTimer.IsEnabled = false; 
+
+                AppBar dBottomAppBar = mainPage.BottomAppBar;
+                double dSize = Convert.ToDouble((mainPage.ActualHeight - dBottomAppBar.ActualHeight) / 3);
+
+
+                TimerTile timerTile = new TimerTile(
+                    new TimeSpan(0, this.ApplianceByType(Type).Minutes, 0), 
+                    this.TileColor,
+                    this.ApplianceIconFromType(Type));
+                timerTile.Width = mainPage.ActualWidth;
+                timerTile.Height = dSize;
+                mainPage.Timers.Children.Add(timerTile);
+
+                
+                Storyboard AddTile = new Storyboard();
+                QuadraticEase ease = new QuadraticEase();
+                ease.EasingMode = EasingMode.EaseIn;
+                
+                DoubleAnimation MoveAnimation = new DoubleAnimation();
+                MoveAnimation.Duration = new Duration(TimeSpan.FromMilliseconds(250));
+                MoveAnimation.From = mainPage.ActualHeight;
+                MoveAnimation.To = (mbTimerCount * dSize);
+                MoveAnimation.EasingFunction = ease;
+
+                Storyboard.SetTarget(MoveAnimation, timerTile);
+                Storyboard.SetTargetProperty(MoveAnimation, "(Canvas.Top)");
+
+                AddTile.Children.Add(MoveAnimation);
+                AddTile.Completed += (sendr, args) =>
+                {
+                    mainPage.NewTimer.IsEnabled = true;
+                };
+                AddTile.Begin();
+
+                mbTimerCount += 1; //TODO: need a better process
             }
             catch (Exception ex)
             {

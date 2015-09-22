@@ -22,9 +22,9 @@ namespace ApplianceTMR
 {
     public sealed partial class MainPage : Page
     {
-        private byte mbTimerCount = 0;
+        
         private bool mbHomePage = true;
-
+        private ATMREngine mEngine = new ATMREngine();
 
         public MainPage()
         {
@@ -53,50 +53,56 @@ namespace ApplianceTMR
         {
             try
             {
-                this.NewTimer.IsEnabled = false; //To insure that that multiple timers are started at the same time... may remove this.
+                //this.NewTimer.IsEnabled = false; //To insure that that multiple timers are started at the same time... may remove this.
 
-                ATMREngine engine = new ATMREngine();
-                AppBar dBottomAppBar = this.BottomAppBar;
-                Appliance.ApplianceType Type = Appliance.ApplianceType.Stove;
-                double dSize = Convert.ToDouble((this.ActualHeight - dBottomAppBar.ActualHeight) / 3);
+                mEngine.TimerLoad(this, Appliance.ApplianceType.Stove);
+
+                //ATMREngine engine = new ATMREngine();
+                //AppBar dBottomAppBar = this.BottomAppBar;
+                //Appliance.ApplianceType Type = Appliance.ApplianceType.Stove;
+                //double dSize = Convert.ToDouble((this.ActualHeight - dBottomAppBar.ActualHeight) / 3);
 
 
-                TimerTile timerTile = new TimerTile(
-                    new TimeSpan(0, engine.ApplianceTime(Type), 0), 
-                    engine.TileColor,
-                    engine.ApplianceIconFromType(Type));
-                timerTile.Width = this.ActualWidth;
-                timerTile.Height = dSize;
-                this.Timers.Children.Add(timerTile);
+                //TimerTile timerTile = new TimerTile(
+                //    new TimeSpan(0, engine.ApplianceTime(Type), 0), 
+                //    engine.TileColor,
+                //    engine.ApplianceIconFromType(Type));
+                //timerTile.Width = this.ActualWidth;
+                //timerTile.Height = dSize;
+                //this.Timers.Children.Add(timerTile);
 
                 
-                Storyboard AddTile = new Storyboard();
-                QuadraticEase ease = new QuadraticEase();
-                ease.EasingMode = EasingMode.EaseIn;
+                //Storyboard AddTile = new Storyboard();
+                //QuadraticEase ease = new QuadraticEase();
+                //ease.EasingMode = EasingMode.EaseIn;
                 
-                DoubleAnimation MoveAnimation = new DoubleAnimation();
-                MoveAnimation.Duration = new Duration(TimeSpan.FromMilliseconds(250));
-                MoveAnimation.From = this.ActualHeight;
-                MoveAnimation.To = (mbTimerCount * dSize);
-                MoveAnimation.EasingFunction = ease;
+                //DoubleAnimation MoveAnimation = new DoubleAnimation();
+                //MoveAnimation.Duration = new Duration(TimeSpan.FromMilliseconds(250));
+                //MoveAnimation.From = this.ActualHeight;
+                //MoveAnimation.To = (mbTimerCount * dSize);
+                //MoveAnimation.EasingFunction = ease;
 
-                Storyboard.SetTarget(MoveAnimation, timerTile);
-                Storyboard.SetTargetProperty(MoveAnimation, "(Canvas.Top)");
+                //Storyboard.SetTarget(MoveAnimation, timerTile);
+                //Storyboard.SetTargetProperty(MoveAnimation, "(Canvas.Top)");
 
-                AddTile.Children.Add(MoveAnimation);
-                AddTile.Completed += (sendr, args) =>
-                    {
-                        this.NewTimer.IsEnabled = true;
-                    };
-                AddTile.Begin();
+                //AddTile.Children.Add(MoveAnimation);
+                //AddTile.Completed += (sendr, args) =>
+                //    {
+                //        this.NewTimer.IsEnabled = true;
+                //    };
+                //AddTile.Begin();
                 
 
-                mbTimerCount += 1;
+                
             }
             catch (Exception ex)
             {
                 logException(ex);
                 this.NewTimer.IsEnabled = true; //Just in case
+            }
+            finally
+            {
+                this.NewTimer.IsEnabled = true;
             }
         }
 
@@ -104,21 +110,21 @@ namespace ApplianceTMR
         {
             try
             {
-                ATMREngine engine = new ATMREngine();
-
                 if (mbHomePage == true)
                 {
                     Settings.Icon = new SymbolIcon(Symbol.Home);
                     Settings.Label = "Home";
 
-                    engine.TimersUnload(this.Timers);
+                    mEngine.TimersUnload(this.Timers);
+
+                    mEngine.TimersLoadDefault(this);
                 }
                 else
                 {
                     Settings.Icon = new SymbolIcon(Symbol.Setting);
                     Settings.Label = "Settings";
 
-                    engine.TimersReload(this.Timers);
+                    mEngine.TimersReload(this.Timers);
                 }
 
                 mbHomePage = !mbHomePage;
@@ -156,9 +162,7 @@ namespace ApplianceTMR
         {
             try
             {
-                ATMREngine engine = new ATMREngine();
-                engine.logException(ex);
-                engine = null;
+                mEngine.logException(ex);
             }
             catch {}
         }

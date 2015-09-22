@@ -9,7 +9,7 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     >
 
-    <Canvas Name="Timers">
+    <Canvas Name="Timers" x:FieldModifier="public">
         <Canvas.Background>
             <ImageBrush ImageSource="/Assets/SmallLogo.scale-240.png" 
                         AlignmentX="Center" 
@@ -20,7 +20,7 @@
     
     <Page.BottomAppBar>
         <CommandBar>
-            <AppBarButton x:Name="NewTimer" Icon="Add" Label="New" Click="NewTimer_Click"/>
+            <AppBarButton x:Name="NewTimer" Icon="Add" Label="New"  x:FieldModifier="public" Click="NewTimer_Click"/>
             <AppBarButton x:Name="Settings" Icon="Setting" Label="Settings" Click="Settings_Click"/>
             <AppBarButton x:Name="About" Icon="Account" Label="About" Click="About_Click" />
         </CommandBar>
