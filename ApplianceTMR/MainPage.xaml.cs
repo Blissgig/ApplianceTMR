@@ -22,15 +22,15 @@ namespace ApplianceTMR
 {
     public sealed partial class MainPage : Page
     {
-        
-        private bool mbHomePage = true;
-        private ATMREngine mEngine = new ATMREngine();
+        private ATMREngine mEngine;
 
         public MainPage()
         {
             this.InitializeComponent();
 
             this.NavigationCacheMode = NavigationCacheMode.Required;
+
+            mEngine = new ATMREngine(this);
         }
 
         /// <summary>
@@ -51,88 +51,12 @@ namespace ApplianceTMR
 
         private void NewTimer_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                //this.NewTimer.IsEnabled = false; //To insure that that multiple timers are started at the same time... may remove this.
-
-                mEngine.TimerLoad(this, Appliance.ApplianceType.Stove);
-
-                //ATMREngine engine = new ATMREngine();
-                //AppBar dBottomAppBar = this.BottomAppBar;
-                //Appliance.ApplianceType Type = Appliance.ApplianceType.Stove;
-                //double dSize = Convert.ToDouble((this.ActualHeight - dBottomAppBar.ActualHeight) / 3);
-
-
-                //TimerTile timerTile = new TimerTile(
-                //    new TimeSpan(0, engine.ApplianceTime(Type), 0), 
-                //    engine.TileColor,
-                //    engine.ApplianceIconFromType(Type));
-                //timerTile.Width = this.ActualWidth;
-                //timerTile.Height = dSize;
-                //this.Timers.Children.Add(timerTile);
-
-                
-                //Storyboard AddTile = new Storyboard();
-                //QuadraticEase ease = new QuadraticEase();
-                //ease.EasingMode = EasingMode.EaseIn;
-                
-                //DoubleAnimation MoveAnimation = new DoubleAnimation();
-                //MoveAnimation.Duration = new Duration(TimeSpan.FromMilliseconds(250));
-                //MoveAnimation.From = this.ActualHeight;
-                //MoveAnimation.To = (mbTimerCount * dSize);
-                //MoveAnimation.EasingFunction = ease;
-
-                //Storyboard.SetTarget(MoveAnimation, timerTile);
-                //Storyboard.SetTargetProperty(MoveAnimation, "(Canvas.Top)");
-
-                //AddTile.Children.Add(MoveAnimation);
-                //AddTile.Completed += (sendr, args) =>
-                //    {
-                //        this.NewTimer.IsEnabled = true;
-                //    };
-                //AddTile.Begin();
-                
-
-                
-            }
-            catch (Exception ex)
-            {
-                logException(ex);
-                this.NewTimer.IsEnabled = true; //Just in case
-            }
-            finally
-            {
-                this.NewTimer.IsEnabled = true;
-            }
+            mEngine.TimerLoad(Appliance.ApplianceType.Stove);
         }
 
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                if (mbHomePage == true)
-                {
-                    Settings.Icon = new SymbolIcon(Symbol.Home);
-                    Settings.Label = "Home";
-
-                    mEngine.TimersUnload(this.Timers);
-
-                    mEngine.TimersLoadDefault(this);
-                }
-                else
-                {
-                    Settings.Icon = new SymbolIcon(Symbol.Setting);
-                    Settings.Label = "Settings";
-
-                    mEngine.TimersReload(this.Timers);
-                }
-
-                mbHomePage = !mbHomePage;
-            }
-            catch (Exception ex)
-            {
-                logException(ex);
-            }
+            mEngine.SettingsSelected();
         }
 
         private async void About_Click(object sender, RoutedEventArgs e)
@@ -158,15 +82,20 @@ namespace ApplianceTMR
             }
         }
 
-        private void logException(Exception ex)
+        private void Timers_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            try
-            {
-                mEngine.logException(ex);
-            }
-            catch {}
+            mEngine.TouchStarted(e.GetCurrentPoint(this));
         }
 
+        private void Timers_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            mEngine.TouchCompleted(e.GetCurrentPoint(this));
+        }
+
+        private void logException(Exception ex)
+        {
+            mEngine.logException(ex);
+        }
 
     }
 }

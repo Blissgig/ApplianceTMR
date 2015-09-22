@@ -6,10 +6,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" 
     >
 
-    <Canvas Name="Timers" x:FieldModifier="public">
+    <Canvas Name="Timers" x:FieldModifier="public" PointerEntered="Timers_PointerEntered" PointerExited="Timers_PointerExited" >
         <Canvas.Background>
             <ImageBrush ImageSource="/Assets/SmallLogo.scale-240.png" 
                         AlignmentX="Center" 
@@ -21,7 +21,7 @@
     <Page.BottomAppBar>
         <CommandBar>
             <AppBarButton x:Name="NewTimer" Icon="Add" Label="New"  x:FieldModifier="public" Click="NewTimer_Click"/>
-            <AppBarButton x:Name="Settings" Icon="Setting" Label="Settings" Click="Settings_Click"/>
+            <AppBarButton x:Name="Settings" Icon="Setting" Label="Settings" x:FieldModifier="public" Click="Settings_Click"/>
             <AppBarButton x:Name="About" Icon="Account" Label="About" Click="About_Click" />
         </CommandBar>
     </Page.BottomAppBar>

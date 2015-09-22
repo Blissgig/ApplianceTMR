@@ -5,10 +5,12 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Data.Xml.Dom;
+using Windows.Foundation;
 using Windows.Storage;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
@@ -52,7 +54,7 @@ namespace ApplianceTMR
     public class Appliance
     {
         private string msFullName = "Egg Timer";
-        private string msPhrase = " has completed";
+        private string msPhrase = "Timer dinged";
         private byte mbMinutes = 5;
         private ApplianceType mtType = ApplianceType.EggTimer;
 
@@ -117,57 +119,28 @@ namespace ApplianceTMR
     /// </summary>
     class ATMREngine
     {
-        private int toastIndex = 1;
+        #region Private Members
         private byte mbTimerCount = 0;
-        private SolidColorBrush mscbTileColor = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 49, 123, 193));
 
-        
+        private List<Appliance> Appliances = new List<Appliance>();
+        private bool mbHomePage = true;
+        private SolidColorBrush mscbTileColor = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 49, 123, 193));
+        private Windows.UI.Input.PointerPoint mStartingPoint;
+        private MainPage mMainPage;
+        #endregion
+
+        #region Public Properties
         public SolidColorBrush TileColor
         {
             get {return mscbTileColor;}
         }
-
-        //public byte ApplianceTime(Appliance.ApplianceType Type)
-        //{
-        //    byte bReturn = 0;
-
-        //    try
-        //    {
-        //        bool bFound = false;
-        //        List<string> ApplianceValues = new List<string>();
-        //        var tempValues = ((string[])ApplicationData.Current.LocalSettings.Values["ApplianceValues"]);
-
-        //        if (tempValues != null)
-        //        {
-        //            ApplianceValues = tempValues.ToList();
-
-        //            if (ApplianceValues.Count > 0)
-        //            {
-        //                string sValue = ApplianceValues.Find(e => (e.IndexOf(Type.ToString()) > -1));
-
-        //                if (sValue != null)
-        //                {
-        //                    Appliance appl = ApplianceFromCSV(sValue);
-        //                    bReturn = appl.Minutes;
-        //                }
-        //            }
-        //        }
-
-
-        //        if (bFound == false)
-        //        {
-        //            Appliance appliance = ApplianceDefauls(Type);
-        //            ApplianceValues.Add(appliance.Type.ToString() + "," + appliance.Minutes.ToString() + "," + appliance.FullName + "," + appliance.Phrase);
-        //            ApplicationData.Current.LocalSettings.Values["ApplianceValues"] = ApplianceValues.ToArray();
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        logException(ex);
-        //    }
-
-        //    return bReturn;
-        //}
+        #endregion
+        
+        public ATMREngine(MainPage mainPage)
+        {
+            this.mMainPage = mainPage;
+            //this.mMainPage
+        }
 
         public Appliance ApplianceByType(Appliance.ApplianceType Type)
         {
@@ -401,13 +374,13 @@ namespace ApplianceTMR
             return appliance;
         }
 
-        public void TimersUnload(Canvas canvas)
+        public void TimersUnload()
         {
             try
             {
                 Storyboard sb = new Storyboard();
 
-                foreach(TimerTile timerTile in canvas.Children)
+                foreach(TimerTile timerTile in mMainPage.Timers.Children)
                 {
                     DoubleAnimation FadeOut = new DoubleAnimation();
                     FadeOut.Duration = new Windows.UI.Xaml.Duration(TimeSpan.FromMilliseconds(400));
@@ -431,23 +404,25 @@ namespace ApplianceTMR
             }
         }
 
-        public void TimersReload(Canvas canvas)
+        public void TimersReload()
         {
             try
             {
                 Storyboard sb = new Storyboard();
 
-                foreach (TimerTile timerTile in canvas.Children)
+                foreach (TimerTile timerTile in mMainPage.Timers.Children)
                 {
-                    DoubleAnimation FadeOut = new DoubleAnimation();
-                    FadeOut.Duration = new Windows.UI.Xaml.Duration(TimeSpan.FromMilliseconds(400));
-                    FadeOut.From = 0.0;
-                    FadeOut.To = 1.0;
+                    DoubleAnimation FadeIn = new DoubleAnimation();
+                    FadeIn.Duration = new Windows.UI.Xaml.Duration(TimeSpan.FromMilliseconds(400));
+                    FadeIn.From = 0.0;
+                    FadeIn.To = 1.0;
 
-                    Storyboard.SetTarget(FadeOut, timerTile);
-                    Storyboard.SetTargetProperty(FadeOut, "(Canvas.Opacity)");
+                    Storyboard.SetTarget(FadeIn, timerTile);
+                    Storyboard.SetTargetProperty(FadeIn, "(Canvas.Opacity)");
 
-                    sb.Children.Add(FadeOut);
+                    sb.Children.Add(FadeIn);
+
+                    mbTimerCount += 1; //Reset, temp
                 }
 
                 if (sb.Children.Count > 0)
@@ -461,14 +436,14 @@ namespace ApplianceTMR
             }
         }
 
-        public void TimersLoadDefault(MainPage mainPage)
+        public void TimersLoadDefault()
         {
             try
             {
                 string[] types = Enum.GetNames(typeof(Appliance.ApplianceType)); 
                 foreach (string type in types)
                 {
-                    TimerLoad(mainPage, this.ApplianceTypeFromType(type));
+                    TimerLoad(this.ApplianceTypeFromType(type));
                 } 
             }
             catch (Exception ex)
@@ -477,23 +452,23 @@ namespace ApplianceTMR
             }
         }
 
-        public void TimerLoad(MainPage mainPage, Appliance.ApplianceType Type)
+        public void TimerLoad(Appliance.ApplianceType Type)
         {
             try
             {
-                mainPage.NewTimer.IsEnabled = false; 
+                this.mMainPage.NewTimer.IsEnabled = false;
 
-                AppBar dBottomAppBar = mainPage.BottomAppBar;
-                double dSize = Convert.ToDouble((mainPage.ActualHeight - dBottomAppBar.ActualHeight) / 3);
+                AppBar dBottomAppBar = this.mMainPage.BottomAppBar;
+                double dSize = Convert.ToDouble((this.mMainPage.ActualHeight - (dBottomAppBar.ActualHeight * 2)) / 3);
 
 
                 TimerTile timerTile = new TimerTile(
                     new TimeSpan(0, this.ApplianceByType(Type).Minutes, 0), 
                     this.TileColor,
                     this.ApplianceIconFromType(Type));
-                timerTile.Width = mainPage.ActualWidth;
+                timerTile.Width = this.mMainPage.ActualWidth;
                 timerTile.Height = dSize;
-                mainPage.Timers.Children.Add(timerTile);
+                this.mMainPage.Timers.Children.Add(timerTile);
 
                 
                 Storyboard AddTile = new Storyboard();
@@ -502,7 +477,7 @@ namespace ApplianceTMR
                 
                 DoubleAnimation MoveAnimation = new DoubleAnimation();
                 MoveAnimation.Duration = new Duration(TimeSpan.FromMilliseconds(250));
-                MoveAnimation.From = mainPage.ActualHeight;
+                MoveAnimation.From = this.mMainPage.ActualHeight;
                 MoveAnimation.To = (mbTimerCount * dSize);
                 MoveAnimation.EasingFunction = ease;
 
@@ -512,7 +487,7 @@ namespace ApplianceTMR
                 AddTile.Children.Add(MoveAnimation);
                 AddTile.Completed += (sendr, args) =>
                 {
-                    mainPage.NewTimer.IsEnabled = true;
+                    this.mMainPage.NewTimer.IsEnabled = true;
                 };
                 AddTile.Begin();
 
@@ -523,6 +498,64 @@ namespace ApplianceTMR
                 logException(ex);
             }
         }
+
+        public void SettingsSelected()
+        {
+            try
+            {
+                if (mbHomePage == true)
+                {
+                    mMainPage.Settings.Icon = new SymbolIcon(Symbol.Home);
+                    mMainPage.Settings.Label = "Home";
+
+                    TimersUnload();
+
+                    mbTimerCount = 0;
+
+                    TimersLoadDefault();
+                }
+                else
+                {
+                    mMainPage.Settings.Icon = new SymbolIcon(Symbol.Setting);
+                    mMainPage.Settings.Label = "Settings";
+
+                    TimersReload();
+                }
+
+                mbHomePage = !mbHomePage;
+            }
+            catch (Exception ex)
+            {
+                logException(ex);
+            }
+        }
+
+        public void TouchStarted(Windows.UI.Input.PointerPoint StartingPoint)
+        {
+            mStartingPoint = StartingPoint;
+        }
+
+        public void TouchCompleted(Windows.UI.Input.PointerPoint EndingPoint)
+        {
+            try
+            {
+                if (mStartingPoint.Position.X > EndingPoint.Position.X)
+                {
+                    System.Diagnostics.Debug.WriteLine("down");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("up"); 
+                }
+            }
+            catch (Exception ex)
+            {
+                logException(ex);
+            }
+        }
+
+
+
 
         public static bool CanSendToasts()
         {
@@ -561,7 +594,6 @@ namespace ApplianceTMR
                     toast.ExpirationTime = DateTimeOffset.UtcNow.AddSeconds(3600);
 
                     ToastNotificationManager.CreateToastNotifier().Show(toast);
-                    toastIndex++;
                 }
             }
             catch (Exception ex)
