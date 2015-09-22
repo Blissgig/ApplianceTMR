@@ -30,8 +30,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Name="ApplianceTime" Grid.Row="0" Grid.Column="1" Text="10 min" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50" TextWrapping="Wrap" x:FieldModifier="public" />
-            <ProgressBar Name="Seconds" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="8" Width="{Binding ActualHeight, ElementName=ColumnIcon}" Height="{Binding ActualHeight, ElementName=TileBase}" Maximum="20" Value="2" Foreground="White" Opacity="1.0" />
+            <TextBlock Name="ApplianceTime" Grid.Row="0" Grid.Column="1" Text="10 min" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50" TextWrapping="Wrap" Opacity="0.0" x:FieldModifier="public" />
         </Grid>        
     </Grid>
 </UserControl>

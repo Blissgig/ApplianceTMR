@@ -476,8 +476,10 @@ namespace ApplianceTMR
                 timerTile.Width = this.mMainPage.ActualWidth;
                 timerTile.Height = dSize;
                 timerTile.Name = newAppliance.Name;
-                timerTile.ApplianceTime.Text = "1 hour" + Environment.NewLine + "8 mins";
                 this.mMainPage.Timers.Children.Add(timerTile);
+
+                TimerSetTime(timerTile, newAppliance.Time);
+
                 Appliances.Add(newAppliance);
                 
                 Storyboard AddTile = new Storyboard();
@@ -523,14 +525,75 @@ namespace ApplianceTMR
                 if (StartingPoint.Position.X < timerTile.ColumnIcon.Width.Value)
                 {
                     //Affecting Icon
-                    string Icon = "H";
+                    
                 }
                 else
                 {
                     //Affecting Time
-                    string Time = "T";
+                    
                 }
+            }
+            catch (Exception ex)
+            {
+                logException(ex);
+            }
+        }
 
+
+        public void TimerSetTime(TimerTile timerTile, TimeSpan Time)
+        {
+            try
+            {
+                Storyboard sb = new Storyboard();
+
+                DoubleAnimation FadeOut = new DoubleAnimation();
+                FadeOut.Duration = new Duration(TimeSpan.FromMilliseconds(400));
+                FadeOut.From = timerTile.ApplianceTime.Opacity; ;
+                FadeOut.To = 0.0;
+
+                Storyboard.SetTarget(FadeOut, timerTile.ApplianceTime);
+                Storyboard.SetTargetProperty(FadeOut, "(TextBlock.Opacity)");
+                sb.Children.Add(FadeOut);
+                sb.Completed += (sendr, e) =>
+                {
+                    string sTime = ""; 
+
+                    if (Time.Hours > 0)
+                    {
+                        sTime = Time.Hours.ToString() + " hour";
+
+                        if (Time.Hours > 1)
+                        {
+                            sTime += "s";
+                        }
+
+                        if (sTime.Length > 0)
+                        {
+                            sTime += Environment.NewLine;
+                        }
+                    }
+
+                    sTime += Time.Minutes.ToString() + " min";
+                    if (Time.Minutes > 1)
+                    {
+                        sTime += "s";
+                    }
+                    Storyboard sbFadeOut = new Storyboard();
+                    DoubleAnimation FadeIn = new DoubleAnimation();
+                    FadeIn.Duration = new Duration(TimeSpan.FromMilliseconds(400));
+                    FadeIn.From = 1.0;
+                    FadeIn.To = 0.0;
+                    timerTile.ApplianceTime.Text = sTime;
+                    
+
+                    FadeIn.From = 0.0;
+                    FadeIn.To = 1.0;
+                    Storyboard.SetTarget(FadeIn, timerTile.ApplianceTime);
+                    Storyboard.SetTargetProperty(FadeIn, "(TextBlock.Opacity)");
+                    sbFadeOut.Children.Add(FadeIn);
+                    sbFadeOut.Begin();
+                };
+                sb.Begin();
             }
             catch (Exception ex)
             {
