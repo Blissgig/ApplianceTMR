@@ -15,6 +15,7 @@ namespace ApplianceTMR
         private Windows.UI.Input.PointerPoint mStartingPoint;
         private MainPage mMainPage;
 
+
         public TimerTile()
         {
             this.InitializeComponent();
@@ -48,18 +49,7 @@ namespace ApplianceTMR
 
         private void TileBase_PointerExited(object sender, PointerRoutedEventArgs e)
         {
-            try
-            {
-                //ATMREngine engine = new ATMREngine(mMainPage);
-
-                //engine.TimerSwipe(this, mStartingPoint, e.GetCurrentPoint(this));
-
-                mMainPage.TimerEngine.TimerSwipe(this, mStartingPoint, e.GetCurrentPoint(this));
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            mMainPage.TimerEngine.TimerSwipe(this, mStartingPoint, e.GetCurrentPoint(this));
         }
     }
 }

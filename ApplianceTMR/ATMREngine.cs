@@ -529,59 +529,68 @@ namespace ApplianceTMR
                     return;
                 }
 
-                Int16 iValue = 1;
-                Appliance applFind = Appliances.Find(e => (e.Name == timerTile.Name));
+                //var v = Math.Abs(StartingPoint.Position.X - EndingPoint.Position.X);
 
-
-                if (StartingPoint.Position.X < (timerTile.ActualWidth / 2))
+                if (Math.Abs(StartingPoint.Position.X - EndingPoint.Position.X) < 25)
                 {
-                    //Affecting Icon
-                    if (EndingPoint.Position.X < StartingPoint.Position.X)
-                    {
-                        iValue = -1;
-                    }
-                 
-                    string[] types = Enum.GetNames(typeof(Appliance.ApplianceType));
-                    string type = "";
-
-                    for(Byte b=0; b < types.Count(); b++)
-                    {
-                        type = types[b];
-
-                        if (type == applFind.Type.ToString())
-                        {
-                            if ((b + iValue) > type.Count())
-                            {
-                                type = types[0];
-                            }
-                            else if ((b + iValue) < 0)
-                            {
-                                type = types[(types.Count() - 1)];
-                            }
-                            else
-                            {
-                                type = types[b + iValue];
-                            }
-                            break;
-                        }
-                    }
-                    applFind.Type = ApplianceTypeFromType(type);
-                    TimerSetIcon(timerTile, applFind);
+                    //Small amount of moment, must be just a press
+                    TimerStartPause(timerTile);
                 }
                 else
                 {
-                    //Affecting Time
-                    if (EndingPoint.Position.X < StartingPoint.Position.X)
-                    {
-                        iValue = -1;
-                    }
-                    TimeSpan timeSpan = applFind.Time.Add(new TimeSpan(0, iValue, 0));
+                    Int16 iValue = 1;
+                    Appliance applFind = Appliances.Find(e => (e.Name == timerTile.Name));
 
-                    //To insure that the value never gets set below zero
-                    if (timeSpan.TotalMinutes > -1)
+                    if (StartingPoint.Position.X < (timerTile.ActualWidth / 2))
                     {
-                        applFind.Time = timeSpan;
-                        TimerSetTime(timerTile, timeSpan);
+                        //Affecting Icon
+                        if (EndingPoint.Position.X < StartingPoint.Position.X)
+                        {
+                            iValue = -1;
+                        }
+
+                        string[] types = Enum.GetNames(typeof(Appliance.ApplianceType));
+                        string type = "";
+
+                        for (Byte b = 0; b < types.Count(); b++)
+                        {
+                            type = types[b];
+
+                            if (type == applFind.Type.ToString())
+                            {
+                                if ((b + iValue) > type.Count())
+                                {
+                                    type = types[0];
+                                }
+                                else if ((b + iValue) < 0)
+                                {
+                                    type = types[(types.Count() - 1)];
+                                }
+                                else
+                                {
+                                    type = types[b + iValue];
+                                }
+                                break;
+                            }
+                        }
+                        applFind.Type = ApplianceTypeFromType(type);
+                        TimerSetIcon(timerTile, applFind);
+                    }
+                    else
+                    {
+                        //Affecting Time
+                        if (EndingPoint.Position.X < StartingPoint.Position.X)
+                        {
+                            iValue = -1;
+                        }
+                        TimeSpan timeSpan = applFind.Time.Add(new TimeSpan(0, iValue, 0));
+
+                        //To insure that the value never gets set below zero
+                        if (timeSpan.TotalMinutes > -1)
+                        {
+                            applFind.Time = timeSpan;
+                            TimerSetTime(timerTile, timeSpan);
+                        }
                     }
                 }
             }
@@ -679,6 +688,24 @@ namespace ApplianceTMR
                     sbFadeIn.Begin();
                 };
                 sb.Begin();
+            }
+            catch (Exception ex)
+            {
+                logException(ex);
+            }
+        }
+
+        public void TimerStartPause(TimerTile timerTile)
+        {
+            try
+            {
+                Appliance appl = Appliances.Find(e => (e.Name == timerTile.Name));
+
+                //Just in case
+                if (appl != null)
+                {
+
+                }
             }
             catch (Exception ex)
             {

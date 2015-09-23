@@ -10,7 +10,7 @@
     d:DesignWidth="480"
     >
     
-    <Grid Name="TileBase" Margin="8" PointerEntered="TileBase_PointerEntered" PointerExited="TileBase_PointerExited">
+    <Grid Name="TileBase" Margin="8" PointerEntered="TileBase_PointerEntered" PointerExited="TileBase_PointerExited" >
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
@@ -30,7 +30,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Name="ApplianceTime" Grid.Row="0" Grid.Column="1" Text="10 min" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50" TextWrapping="Wrap" Opacity="0.0" x:FieldModifier="public" />
+            <TextBlock Name="ApplianceTime" Grid.Row="0" Grid.Column="1" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50" TextWrapping="Wrap" Opacity="0.0" x:FieldModifier="public" />
         </Grid>        
     </Grid>
 </UserControl>
