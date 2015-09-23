@@ -9,18 +9,19 @@
     d:DesignHeight="160"
     d:DesignWidth="480"
     >
-    
-    <Grid Name="TileBase" Margin="8" PointerEntered="TileBase_PointerEntered" PointerExited="TileBase_PointerExited" >
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="5*" />
-            <ColumnDefinition Width="5*" />
-        </Grid.ColumnDefinitions>
+    <Border Name="TileBorder" BorderThickness="1" CornerRadius="16">
+        <Grid Name="TileBase" Margin="8" PointerEntered="TileBase_PointerEntered" PointerExited="TileBase_PointerExited">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <Image Name="ApplIcon" Grid.Row="0" Grid.Column="0" Margin="8" x:FieldModifier="public" />
-        <TextBlock Name="ApplianceTime" Grid.Row="0" Grid.Column="1" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50" TextWrapping="Wrap" Opacity="0.0" x:FieldModifier="public" />
-    </Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5*" />
+                <ColumnDefinition Width="5*" />
+            </Grid.ColumnDefinitions>
+
+            <Image Name="ApplIcon" Grid.Row="0" Grid.Column="0" Margin="8" x:FieldModifier="public" />
+            <TextBlock Name="ApplianceTime" Grid.Row="0" Grid.Column="1" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50" TextWrapping="Wrap" Opacity="0.0" x:FieldModifier="public" />
+        </Grid>
+    </Border>
 </UserControl>

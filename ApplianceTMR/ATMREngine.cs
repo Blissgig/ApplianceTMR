@@ -16,7 +16,11 @@ using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Input;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Popups;
-using Windows.ApplicationModel; //For toast
+using Windows.ApplicationModel;
+using Windows.ApplicationModel.Background; //For toast
+using System.Threading;
+using Windows.UI.Core;
+
 
 namespace ApplianceTMR
 {
@@ -56,12 +60,14 @@ namespace ApplianceTMR
     
     public class Appliance
     {
+        #region Private Members
         private string msName = "GUID";
         private string msFullName = "Egg Timer";
         private string msPhrase = "Timer dinged";
         private TimeSpan mtsTime = new TimeSpan(0, 5, 0);
         private bool mbIsRunning = false;
         private ApplianceType mtType = ApplianceType.EggTimer;
+        #endregion
 
         public Appliance()
         {
@@ -81,6 +87,7 @@ namespace ApplianceTMR
             this.Type = Type;
         }
 
+        #region Public Properties
         public string Name
         {
             get { return msName; }
@@ -134,6 +141,7 @@ namespace ApplianceTMR
 
             set { mtType = value; }
         }
+        #endregion
     }
 
     /// <summary>
@@ -144,6 +152,7 @@ namespace ApplianceTMR
         #region Private Members
         private List<Appliance> Appliances = new List<Appliance>();
         private bool mbHomePage = true;
+        private bool mbIsRunning = false;
         private SolidColorBrush mTileColor = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 49, 123, 193));
         private Windows.UI.Input.PointerPoint mStartingPoint;
         private MainPage mMainPage;
@@ -702,8 +711,69 @@ namespace ApplianceTMR
                 //Just in case
                 if (appl != null)
                 {
+                    appl.IsRunning = !appl.IsRunning;
 
+                    if (mbIsRunning == false)
+                    {
+                        mbIsRunning = true;
+                        TimerRun();
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                logException(ex);
+            }
+        }
+
+        public async void TimerRun()
+        {
+            try 
+	        {
+                Appliance applTemp = new Appliance();
+                IProgress<object> progress = new Progress<object>(_ => ApplyTime(applTemp));
+                await Task.Run(async () =>
+                {
+                    while (mbIsRunning == true)
+                    {
+                        await Task.Delay(1000);
+                        foreach (Appliance appl in Appliances)
+                        {
+                            if (appl.IsRunning == true)
+                            {
+                                appl.Time = appl.Time.Add(new TimeSpan(0, 0, -1));
+
+                                if (appl.Time.Seconds == 0)
+                                {
+                                    applTemp = appl;
+                                    progress.Report(null);
+                                }
+                            }
+                        }
+                    }
+                });
+	        }
+	        catch (Exception ex)
+	        {
+		        logException(ex);
+	        }
+        }
+
+        private void ApplyTime(Appliance appl)
+        {
+            try
+            {
+                TimerTile timerTile = (TimerTile)mMainPage.FindName(appl.Name);
+
+                if (appl.Time.TotalSeconds == 0)
+                {
+                    //TODO: call toast, update display
+                }
+                else
+                {
+                    TimerSetTime(timerTile, appl.Time);
+                }
+                
             }
             catch (Exception ex)
             {
@@ -821,30 +891,39 @@ namespace ApplianceTMR
             }
         }
 
-        public static ToastNotification CreateTextOnlyToast(string toastHeading, string toastBody)
+        public ToastNotification CreateTextOnlyToast(string toastHeading, string toastBody)
         {
-            // Using the ToastText02 toast template.
-            ToastTemplateType toastTemplate = ToastTemplateType.ToastText02;
+            ToastNotification toastReturn = null;
 
-            // Retrieve the content part of the toast so we can change the text.
-            XmlDocument toastXml = ToastNotificationManager.GetTemplateContent(toastTemplate);
+            try
+            {
+                // Using the ToastText02 toast template.
+                ToastTemplateType toastTemplate = ToastTemplateType.ToastText02;
 
-            //Find the text component of the content
-            XmlNodeList toastTextElements = toastXml.GetElementsByTagName("text");
+                // Retrieve the content part of the toast so we can change the text.
+                XmlDocument toastXml = ToastNotificationManager.GetTemplateContent(toastTemplate);
 
-            // Set the text on the toast. 
-            // The first line of text in the ToastText02 template is treated as header text, and will be bold.
-            toastTextElements[0].AppendChild(toastXml.CreateTextNode(toastHeading));
-            toastTextElements[1].AppendChild(toastXml.CreateTextNode(toastBody));
+                //Find the text component of the content
+                XmlNodeList toastTextElements = toastXml.GetElementsByTagName("text");
 
-            // Set the duration on the toast
-            IXmlNode toastNode = toastXml.SelectSingleNode("/toast");
-            ((XmlElement)toastNode).SetAttribute("duration", "long");
+                // Set the text on the toast. 
+                // The first line of text in the ToastText02 template is treated as header text, and will be bold.
+                toastTextElements[0].AppendChild(toastXml.CreateTextNode(toastHeading));
+                toastTextElements[1].AppendChild(toastXml.CreateTextNode(toastBody));
 
-            // Create the actual toast object using this toast specification.
-            ToastNotification toast = new ToastNotification(toastXml);
+                // Set the duration on the toast
+                IXmlNode toastNode = toastXml.SelectSingleNode("/toast");
+                ((XmlElement)toastNode).SetAttribute("duration", "long");
 
-            return toast;
+                // Create the actual toast object using this toast specification.
+                toastReturn = new ToastNotification(toastXml);
+            }
+            catch (Exception ex)
+            {
+                logException(ex);
+            }
+
+            return toastReturn;
         }
 
         public void SaveSetting(string Setting, string Value)
