@@ -20,7 +20,7 @@ namespace ApplianceTMR
 {
     public sealed partial class MainPage : Page
     {
-        private ATMREngine mTimerEngine;
+        public ATMREngine TimerEngine;
 
         
         public MainPage()
@@ -29,8 +29,13 @@ namespace ApplianceTMR
 
             this.NavigationCacheMode = NavigationCacheMode.Required;
 
-            mTimerEngine = new ATMREngine(this);
+            TimerEngine = new ATMREngine(this);
         }
+
+        //public ATMREngine Engine
+        //{
+        //    get { return mTimerEngine; }
+        //}
 
         /// <summary>
         /// Invoked when this page is about to be displayed in a Frame.
@@ -50,27 +55,27 @@ namespace ApplianceTMR
 
         private void NewTimer_Click(object sender, RoutedEventArgs e)
         {
-            mTimerEngine.TimerNew(Appliance.ApplianceType.Stove);
+            TimerEngine.TimerNew(Appliance.ApplianceType.Stove);
         }
 
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
-            mTimerEngine.SettingsSelected();
+            TimerEngine.SettingsSelected();
         }
 
         private void About_Click(object sender, RoutedEventArgs e)
         {
-            mTimerEngine.AboutSelected();
+            TimerEngine.AboutSelected();
         }
 
         private void Timers_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            mTimerEngine.TouchStarted(e.GetCurrentPoint(this));
+            TimerEngine.TouchStarted(e.GetCurrentPoint(this));
         }
 
         private void Timers_PointerExited(object sender, PointerRoutedEventArgs e)
         {
-            mTimerEngine.TouchCompleted(e.GetCurrentPoint(this));
+            TimerEngine.TouchCompleted(e.GetCurrentPoint(this));
         }
     }
 }

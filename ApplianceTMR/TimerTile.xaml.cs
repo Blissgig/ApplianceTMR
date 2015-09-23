@@ -50,16 +50,16 @@ namespace ApplianceTMR
         {
             try
             {
-                ATMREngine engine = new ATMREngine(mMainPage);
+                //ATMREngine engine = new ATMREngine(mMainPage);
 
-                engine.TimerSwipe(this, mStartingPoint, e.GetCurrentPoint(this));
+                //engine.TimerSwipe(this, mStartingPoint, e.GetCurrentPoint(this));
 
+                mMainPage.TimerEngine.TimerSwipe(this, mStartingPoint, e.GetCurrentPoint(this));
             }
             catch (Exception)
             {
                 throw;
             }
-            
         }
     }
 }

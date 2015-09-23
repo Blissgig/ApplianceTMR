@@ -60,6 +60,7 @@ namespace ApplianceTMR
         private string msFullName = "Egg Timer";
         private string msPhrase = "Timer dinged";
         private TimeSpan mtsTime = new TimeSpan(0, 5, 0);
+        private bool mbIsRunning = false;
         private ApplianceType mtType = ApplianceType.EggTimer;
 
         public Appliance()
@@ -106,11 +107,25 @@ namespace ApplianceTMR
             set { msFullName = value; }
         }
 
+        public string Phrase
+        {
+            get { return msPhrase; }
+
+            set { msPhrase = value; }
+        }
+
         public TimeSpan Time
         {
             get { return mtsTime; }
 
             set { mtsTime = value; }
+        }
+
+        public bool IsRunning
+        {
+            get { return mbIsRunning; }
+
+            set { mbIsRunning = value; }
         }
 
         public ApplianceType Type
@@ -119,24 +134,17 @@ namespace ApplianceTMR
 
             set { mtType = value; }
         }
-
-        public string Phrase
-        {
-            get { return msPhrase; }
-
-            set { msPhrase = value; }
-        }
     }
 
     /// <summary>
     /// Functions that should be outside the UI.
     /// </summary>
-    class ATMREngine
+    public class ATMREngine
     {
         #region Private Members
         private List<Appliance> Appliances = new List<Appliance>();
         private bool mbHomePage = true;
-        private SolidColorBrush mscbTileColor = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 49, 123, 193));
+        private SolidColorBrush mTileColor = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 49, 123, 193));
         private Windows.UI.Input.PointerPoint mStartingPoint;
         private MainPage mMainPage;
         #endregion
@@ -144,7 +152,7 @@ namespace ApplianceTMR
         #region Public Properties
         public SolidColorBrush TileColor
         {
-            get {return mscbTileColor;}
+            get {return mTileColor;}
         }
         #endregion
         
@@ -521,16 +529,61 @@ namespace ApplianceTMR
                     return;
                 }
 
+                Int16 iValue = 1;
+                Appliance applFind = Appliances.Find(e => (e.Name == timerTile.Name));
+
 
                 if (StartingPoint.Position.X < timerTile.ColumnIcon.Width.Value)
                 {
                     //Affecting Icon
+                    if (EndingPoint.Position.X < StartingPoint.Position.X)
+                    {
+                        iValue = -1;
+                    }
+                 
+                    string[] types = Enum.GetNames(typeof(Appliance.ApplianceType));
+                    string type = "";
+
+                    for(Byte b=0; b < types.Count(); b++)
+                    {
+                        type = types[b];
+
+                        if (type == applFind.Type.ToString())
+                        {
+                            if ((b + iValue) > type.Count())
+                            {
+                                type = types[0];
+                            }
+                            else if ((b + iValue) < 0)
+                            {
+                                type = types[types.Count()];
+                            }
+                            else
+                            {
+                                type = types[b + iValue];
+                            }
+                            break;
+                        }
+                    }
+                    applFind.Type = ApplianceTypeFromType(type);
+
                     
                 }
                 else
                 {
                     //Affecting Time
-                    
+                    if (EndingPoint.Position.X < StartingPoint.Position.X)
+                    {
+                        iValue = -1;
+                    }
+                    TimeSpan timeSpan = applFind.Time.Add(new TimeSpan(0, iValue, 0));
+
+                    //To insure that the value never gets set below zero
+                    if (timeSpan.TotalMinutes > -1)
+                    {
+                        applFind.Time = timeSpan;
+                        TimerSetTime(timerTile, timeSpan);
+                    }
                 }
             }
             catch (Exception ex)
@@ -538,8 +591,7 @@ namespace ApplianceTMR
                 logException(ex);
             }
         }
-
-
+        
         public void TimerSetTime(TimerTile timerTile, TimeSpan Time)
         {
             try
