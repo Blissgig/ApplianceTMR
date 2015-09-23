@@ -41,7 +41,12 @@ namespace ApplianceTMR
                 throw;
             }
         }
-                
+             
+        public SolidColorBrush TileColor
+        {
+            set { this.TileBase.Background = value; }
+        }
+
         private void TileBase_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
             mStartingPoint = e.GetCurrentPoint(this);

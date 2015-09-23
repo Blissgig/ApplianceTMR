@@ -16,21 +16,11 @@
         </Grid.RowDefinitions>
         
         <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="ColumnIcon" Width="5*" x:FieldModifier="public" />
+            <ColumnDefinition Width="5*" />
             <ColumnDefinition Width="5*" />
         </Grid.ColumnDefinitions>
 
         <Image Name="ApplIcon" Grid.Row="0" Grid.Column="0" Margin="8" x:FieldModifier="public" />
-        <Grid Name="Details"  Grid.Row="0" Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
-            <TextBlock Name="ApplianceTime" Grid.Row="0" Grid.Column="1" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50" TextWrapping="Wrap" Opacity="0.0" x:FieldModifier="public" />
-        </Grid>        
+        <TextBlock Name="ApplianceTime" Grid.Row="0" Grid.Column="1" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50" TextWrapping="Wrap" Opacity="0.0" x:FieldModifier="public" />
     </Grid>
 </UserControl>

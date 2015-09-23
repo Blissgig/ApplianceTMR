@@ -384,8 +384,6 @@ namespace ApplianceTMR
                         appliance.Time = new TimeSpan(1, 0, 0);
                         break;
                 }
-
-
             }
             catch (Exception ex)
             {
@@ -790,22 +788,6 @@ namespace ApplianceTMR
         }
 
 
-
-
-        public static bool CanSendToasts()
-        {
-            bool bReturn = true;
-            var notifier = ToastNotificationManager.CreateToastNotifier();
-
-            if (notifier.Setting != NotificationSetting.Enabled)
-            {
-                bReturn = false;
-            }
-
-            return bReturn;
-        }
-
-
         /// <summary>
         /// Code found here.  Just want to send a notification and this does it, nice and simple.
         /// https://code.msdn.microsoft.com/windowsapps/Action-Center-Quickstart-b15089f2/sourcecode?fileId=111808&pathId=298223712
@@ -814,13 +796,15 @@ namespace ApplianceTMR
         {
             try
             {
-                if (CanSendToasts() == true)
+                var notifier = ToastNotificationManager.CreateToastNotifier();
+
+                if (notifier.Setting == NotificationSetting.Enabled)
                 {
                     // Use a helper method to create a new ToastNotification.
                     // Each time we run this code, we'll append the count (toastIndex in this example) to the message
                     // so that it can be seen as a unique message in the action center. This is not mandatory - we
                     // do it here for educational purposes.
-                    ToastNotification toast = CreateTextOnlyToast(Title, Body); 
+                    ToastNotification toast = CreateTextOnlyToast(Title, Body);
 
                     // Optional. Setting an expiration time on a toast notification defines the maximum
                     // time the notification will be displayed in action center before it expires and is removed. 
