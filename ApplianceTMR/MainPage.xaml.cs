@@ -32,11 +32,6 @@ namespace ApplianceTMR
             TimerEngine = new ATMREngine(this);
         }
 
-        //public ATMREngine Engine
-        //{
-        //    get { return mTimerEngine; }
-        //}
-
         /// <summary>
         /// Invoked when this page is about to be displayed in a Frame.
         /// </summary>

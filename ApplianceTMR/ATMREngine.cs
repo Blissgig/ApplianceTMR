@@ -533,7 +533,7 @@ namespace ApplianceTMR
                 Appliance applFind = Appliances.Find(e => (e.Name == timerTile.Name));
 
 
-                if (StartingPoint.Position.X < timerTile.ColumnIcon.Width.Value)
+                if (StartingPoint.Position.X < (timerTile.ActualWidth / 2))
                 {
                     //Affecting Icon
                     if (EndingPoint.Position.X < StartingPoint.Position.X)
@@ -556,7 +556,7 @@ namespace ApplianceTMR
                             }
                             else if ((b + iValue) < 0)
                             {
-                                type = types[types.Count()];
+                                type = types[(types.Count() - 1)];
                             }
                             else
                             {
@@ -566,8 +566,7 @@ namespace ApplianceTMR
                         }
                     }
                     applFind.Type = ApplianceTypeFromType(type);
-
-                    
+                    TimerSetIcon(timerTile, applFind);
                 }
                 else
                 {
@@ -592,6 +591,43 @@ namespace ApplianceTMR
             }
         }
         
+        public void TimerSetIcon(TimerTile timerTile, Appliance appl)
+        {
+            try
+            {
+                Storyboard sb = new Storyboard();
+
+                DoubleAnimation FadeOut = new DoubleAnimation();
+                FadeOut.Duration = new Duration(TimeSpan.FromMilliseconds(400));
+                FadeOut.From = timerTile.ApplianceTime.Opacity; ;
+                FadeOut.To = 0.0;
+
+                Storyboard.SetTarget(FadeOut, timerTile.ApplIcon);
+                Storyboard.SetTargetProperty(FadeOut, "(Image.Opacity)");
+                sb.Children.Add(FadeOut);
+                sb.Completed += (sendr, e) =>
+                {
+                   
+                    Storyboard sbFadeIn = new Storyboard();
+                    DoubleAnimation FadeIn = new DoubleAnimation();
+                    FadeIn.Duration = new Duration(TimeSpan.FromMilliseconds(400));
+                    FadeIn.From = 0.0;
+                    FadeIn.To = 1.0;
+                    timerTile.ApplIcon.Source = ApplianceIconFromType(appl.Type).Source;
+
+                    Storyboard.SetTarget(FadeIn, timerTile.ApplIcon);
+                    Storyboard.SetTargetProperty(FadeIn, "(Image.Opacity)");
+                    sbFadeIn.Children.Add(FadeIn);
+                    sbFadeIn.Begin();
+                };
+                sb.Begin();
+            }
+            catch (Exception ex)
+            {
+                logException(ex);
+            }
+        }
+
         public void TimerSetTime(TimerTile timerTile, TimeSpan Time)
         {
             try
@@ -630,20 +666,17 @@ namespace ApplianceTMR
                     {
                         sTime += "s";
                     }
-                    Storyboard sbFadeOut = new Storyboard();
+                    Storyboard sbFadeIn = new Storyboard();
                     DoubleAnimation FadeIn = new DoubleAnimation();
                     FadeIn.Duration = new Duration(TimeSpan.FromMilliseconds(400));
-                    FadeIn.From = 1.0;
-                    FadeIn.To = 0.0;
-                    timerTile.ApplianceTime.Text = sTime;
-                    
-
                     FadeIn.From = 0.0;
                     FadeIn.To = 1.0;
+                    timerTile.ApplianceTime.Text = sTime;
+                    
                     Storyboard.SetTarget(FadeIn, timerTile.ApplianceTime);
                     Storyboard.SetTargetProperty(FadeIn, "(TextBlock.Opacity)");
-                    sbFadeOut.Children.Add(FadeIn);
-                    sbFadeOut.Begin();
+                    sbFadeIn.Children.Add(FadeIn);
+                    sbFadeIn.Begin();
                 };
                 sb.Begin();
             }

@@ -16,11 +16,11 @@
         </Grid.RowDefinitions>
         
         <Grid.ColumnDefinitions>
-            <ColumnDefinition x:FieldModifier="public" x:Name="ColumnIcon" Width="160" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition x:Name="ColumnIcon" Width="5*" x:FieldModifier="public" />
+            <ColumnDefinition Width="5*" />
         </Grid.ColumnDefinitions>
 
-        <Image Name="ApplIcon" Grid.Row="0" Grid.Column="0" Margin="8" />
+        <Image Name="ApplIcon" Grid.Row="0" Grid.Column="0" Margin="8" x:FieldModifier="public" />
         <Grid Name="Details"  Grid.Row="0" Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
