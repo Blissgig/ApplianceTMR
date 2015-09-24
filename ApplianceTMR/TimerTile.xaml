@@ -32,16 +32,18 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Name="ApplianceTimeHours" Grid.Row="1" Grid.Column="0" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" TextWrapping="Wrap" Opacity="0.0" x:FieldModifier="public" />
-                <TextBlock Name="ApplianceTimeHoursColon" Grid.Row="1" Grid.Column="0" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" TextWrapping="Wrap" Opacity="0.0" x:FieldModifier="public" />
-                <TextBlock Name="ApplianceTimeMinutes" Grid.Row="1" Grid.Column="2" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" TextWrapping="Wrap" Opacity="0.0" x:FieldModifier="public" />
-                <TextBlock Name="ApplianceTimeMinutesColon" Grid.Row="1" Grid.Column="3" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" TextWrapping="Wrap" Opacity="0.0" x:FieldModifier="public" />
-                <TextBlock Name="ApplianceTimeSeconds" Grid.Row="1" Grid.Column="4" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" TextWrapping="Wrap" Opacity="0.0" x:FieldModifier="public" />
+                <TextBlock Name="TimeHours" Grid.Row="1" Grid.Column="0" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" TextWrapping="Wrap" Opacity="0.0" x:FieldModifier="public" />
+                <TextBlock Name="TimeHoursColon" Grid.Row="1" Grid.Column="0" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" TextWrapping="Wrap" Opacity="0.0" x:FieldModifier="public" />
+                <TextBlock Name="TimeMinutesTen" Grid.Row="1" Grid.Column="2" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" TextWrapping="Wrap" Opacity="0.0" x:FieldModifier="public" />
+                <TextBlock Name="TimeMinutesOne" Grid.Row="1" Grid.Column="3" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" TextWrapping="Wrap" Opacity="0.0" x:FieldModifier="public" />
+                <TextBlock Name="TimeMinutesColon" Grid.Row="1" Grid.Column="4" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" TextWrapping="Wrap" Opacity="0.0" x:FieldModifier="public" />
+                <TextBlock Name="TimeSecondsTen" Grid.Row="1" Grid.Column="5" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" TextWrapping="Wrap" Opacity="0.0" x:FieldModifier="public" />
+                <TextBlock Name="TimeSecondsOne" Grid.Row="1" Grid.Column="5" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" TextWrapping="Wrap" Opacity="0.0" x:FieldModifier="public" />
             </Grid>
-            
-            
         </Grid>
     </Border>
 </UserControl>
