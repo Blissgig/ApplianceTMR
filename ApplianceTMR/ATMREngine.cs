@@ -615,10 +615,10 @@ namespace ApplianceTMR
 
                 DoubleAnimation FadeOut = new DoubleAnimation();
                 FadeOut.Duration = new Duration(TimeSpan.FromMilliseconds(400));
-                FadeOut.From = timerTile.ApplianceTime.Opacity; ;
+                FadeOut.From = timerTile.ApplianceIcon.Opacity; ;
                 FadeOut.To = 0.0;
 
-                Storyboard.SetTarget(FadeOut, timerTile.ApplIcon);
+                Storyboard.SetTarget(FadeOut, timerTile.ApplianceIcon);
                 Storyboard.SetTargetProperty(FadeOut, "(Image.Opacity)");
                 sb.Children.Add(FadeOut);
                 sb.Completed += (sendr, e) =>
@@ -629,9 +629,9 @@ namespace ApplianceTMR
                     FadeIn.Duration = new Duration(TimeSpan.FromMilliseconds(400));
                     FadeIn.From = 0.0;
                     FadeIn.To = 1.0;
-                    timerTile.ApplIcon.Source = ApplianceIconFromType(appl.Type).Source;
+                    timerTile.ApplianceIcon.Source = ApplianceIconFromType(appl.Type).Source;
 
-                    Storyboard.SetTarget(FadeIn, timerTile.ApplIcon);
+                    Storyboard.SetTarget(FadeIn, timerTile.ApplianceIcon);
                     Storyboard.SetTargetProperty(FadeIn, "(Image.Opacity)");
                     sbFadeIn.Children.Add(FadeIn);
                     sbFadeIn.Begin();
@@ -645,51 +645,29 @@ namespace ApplianceTMR
         }
 
         public void TimerSetTime(TimerTile timerTile, TimeSpan Time)
-        {
+        { 
             try
             {
                 Storyboard sb = new Storyboard();
 
                 DoubleAnimation FadeOut = new DoubleAnimation();
                 FadeOut.Duration = new Duration(TimeSpan.FromMilliseconds(400));
-                FadeOut.From = timerTile.ApplianceTime.Opacity; ;
+                //FadeOut.From = timerTile.ApplianceTime.Opacity; ;
                 FadeOut.To = 0.0;
 
-                Storyboard.SetTarget(FadeOut, timerTile.ApplianceTime);
+                //Storyboard.SetTarget(FadeOut, timerTile.ApplianceTime);
                 Storyboard.SetTargetProperty(FadeOut, "(TextBlock.Opacity)");
                 sb.Children.Add(FadeOut);
                 sb.Completed += (sendr, e) =>
                 {
-                    string sTime = ""; 
-
-                    if (Time.Hours > 0)
-                    {
-                        sTime = Time.Hours.ToString() + " hour";
-
-                        if (Time.Hours > 1)
-                        {
-                            sTime += "s";
-                        }
-
-                        if (sTime.Length > 0)
-                        {
-                            sTime += Environment.NewLine;
-                        }
-                    }
-
-                    sTime += Time.Minutes.ToString() + " min";
-                    if (Time.Minutes > 1)
-                    {
-                        sTime += "s";
-                    }
                     Storyboard sbFadeIn = new Storyboard();
                     DoubleAnimation FadeIn = new DoubleAnimation();
                     FadeIn.Duration = new Duration(TimeSpan.FromMilliseconds(400));
                     FadeIn.From = 0.0;
                     FadeIn.To = 1.0;
-                    timerTile.ApplianceTime.Text = sTime;
+                    //timerTile.ApplianceTime.Text = sTime;
                     
-                    Storyboard.SetTarget(FadeIn, timerTile.ApplianceTime);
+                    //Storyboard.SetTarget(FadeIn, timerTile.ApplianceTime);
                     Storyboard.SetTargetProperty(FadeIn, "(TextBlock.Opacity)");
                     sbFadeIn.Children.Add(FadeIn);
                     sbFadeIn.Begin();

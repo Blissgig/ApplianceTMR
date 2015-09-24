@@ -50,7 +50,7 @@ namespace ApplianceTMR
 
         private void NewTimer_Click(object sender, RoutedEventArgs e)
         {
-            TimerEngine.TimerNew(Appliance.ApplianceType.Stove);
+            TimerEngine.TimerNew(Appliance.ApplianceType.Fridge);
         }
 
         private void Settings_Click(object sender, RoutedEventArgs e)
