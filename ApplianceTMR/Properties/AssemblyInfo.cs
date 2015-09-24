@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ApplianceTMR")]
+[assembly: AssemblyTitle("Appliance TMR")]
 [assembly: AssemblyDescription("Appliance Timer")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Blissgig.com")]
-[assembly: AssemblyProduct("ApplianceTMR")]
+[assembly: AssemblyProduct("Appliance TMR")]
 [assembly: AssemblyCopyright("Copyright © James Rose 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

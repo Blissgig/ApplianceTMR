@@ -20,6 +20,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Background; //For toast
 using System.Threading;
 using Windows.UI.Core;
+using System.Xml.Linq;
 
 
 namespace ApplianceTMR
@@ -546,8 +547,14 @@ namespace ApplianceTMR
                                 break;
                             }
                         }
+
+                        Appliances.Remove(applFind);  //Remove the current item, then add the new one below.
                         applFind.Type = ApplianceTypeFromType(type);
+                        applFind = ApplianceByType(applFind.Type);
+                        timerTile.Name = applFind.Name;
+                        Appliances.Add(applFind);
                         TimerSetIcon(timerTile, applFind);
+                        TimerSetTime(timerTile, applFind.Time);
                     }
                     else
                     {
@@ -623,6 +630,12 @@ namespace ApplianceTMR
                     {
                         sValue = Time.Hours.ToString();
                         TextChange(timerTile.TimeHoursColon, ":");
+                        timerTile.TimeGrid.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star); 
+                    }
+                    else
+                    {
+                        TextChange(timerTile.TimeHoursColon, "");
+                        timerTile.TimeGrid.ColumnDefinitions[1].Width = new GridLength(0);   
                     }
                     TextChange(timerTile.TimeHours, sValue);
                 }
@@ -636,17 +649,25 @@ namespace ApplianceTMR
                         if (Time.Hours > 0)
                         {
                             sValue = "0";
+                            timerTile.TimeGrid.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Star); 
                         }
                         else
                         {
                             sValue = "";
+                            timerTile.TimeGrid.ColumnDefinitions[2].Width = new GridLength(0);  
                         }    
                     }
                     else
                     {
                         sValue = Time.Minutes.ToString("00").Substring(0, 1);
+                        timerTile.TimeGrid.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Star); 
                     }
                     TextChange(timerTile.TimeMinutesTen, sValue);
+                }
+                else if (Time.Minutes.ToString("00").Substring(0, 1) == timerTile.TimeMinutesTen.Text && Time.Hours == 0)
+                {
+                    TextChange(timerTile.TimeMinutesTen, "");
+                    timerTile.TimeGrid.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Star); 
                 }
 
                 //MINUTES - ONES
@@ -716,12 +737,14 @@ namespace ApplianceTMR
         {
             try 
 	        {
+                bool bRunning = false;
                 Appliance applTemp = new Appliance();
                 IProgress<object> progress = new Progress<object>(_ => ApplyTime(applTemp));
                 await Task.Run(async () =>
                 {
                     while (mbIsRunning == true)
                     {
+                        bRunning = false; //Reset
                         await Task.Delay(1000);
                         foreach (Appliance appl in Appliances)
                         {
@@ -730,8 +753,12 @@ namespace ApplianceTMR
                                 appl.Time = appl.Time.Add(new TimeSpan(0, 0, -1));
                                 applTemp = appl;
                                 progress.Report(null);
+                                bRunning = true;
                             }
                         }
+
+                        //All timers have completed.  Why waste the cycles if we don't need to.... That's just rude.
+                        if (bRunning == false) { mbIsRunning = false; }
                     }
                 });
 	        }
@@ -749,13 +776,15 @@ namespace ApplianceTMR
 
                 if (appl.Time.TotalSeconds == 0)
                 {
-                    //TODO: call toast, update display
+                    appl.IsRunning = false;
+                    SentToast(appl.FullName, appl.Phrase);
+                    appl = ApplianceDefaults(appl.Type);
+                    TimerSetTime(timerTile, appl.Time);
                 }
                 else
                 {
                     TimerSetTime(timerTile, appl.Time);
                 }
-                
             }
             catch (Exception ex)
             {
@@ -804,6 +833,7 @@ namespace ApplianceTMR
                 throw;
             }
         }
+
         public void SettingsSelected()
         {
             try
@@ -837,8 +867,13 @@ namespace ApplianceTMR
         {
             try 
 	        {
-                string appName = "Appliance TMR";
                 var version = Package.Current.Id.Version;
+                StorageFile file = await Package.Current.InstalledLocation.GetFileAsync("AppxManifest.xml");
+                string manifestXml = await FileIO.ReadTextAsync(file);
+                XDocument doc = XDocument.Parse(manifestXml);
+                XNamespace packageNamespace = "http://schemas.microsoft.com/appx/2010/manifest";
+                var displayName = (from name in doc.Descendants(packageNamespace + "DisplayName")
+                                   select name.Value).First();
 
                 string Message =
                     "Site: Blissgig.com" + Environment.NewLine +
@@ -847,7 +882,7 @@ namespace ApplianceTMR
                     "Version: " + String.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision); ;
 
 
-                MessageDialog messageDialog = new MessageDialog(Message, appName);
+                MessageDialog messageDialog = new MessageDialog(Message, displayName);
                 await messageDialog.ShowAsync();
 	        }
 	        catch (Exception ex)

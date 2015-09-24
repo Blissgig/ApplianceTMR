@@ -21,7 +21,7 @@
             </Grid.ColumnDefinitions>
 
             <Image Name="ApplianceIcon" Grid.Row="0" Grid.Column="0" Margin="8" x:FieldModifier="public" />
-            <Grid  Grid.Row="0" Grid.Column="1">
+            <Grid Name="TimeGrid" Grid.Row="0" Grid.Column="1" x:FieldModifier="public">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
@@ -29,10 +29,10 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="8" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="8" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
