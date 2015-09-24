@@ -24,40 +24,6 @@ using Windows.UI.Core;
 
 namespace ApplianceTMR
 {
-    public class EnumStringAttribute : Attribute
-    {
-        private string msValue;
-
-        public EnumStringAttribute(string Value)
-        {
-            this.msValue = Value;
-        }
-
-        public string Value
-        {
-            get { return msValue; }
-
-            set { msValue = value; }
-        }
-    }
-
-    public class EnumByteAttribute : Attribute
-    {
-        private byte mbValue = 0;
-
-        public EnumByteAttribute(byte Value)
-        {
-            this.mbValue = Value;
-        }
-
-        public byte Value
-        {
-            get { return mbValue; }
-
-            set { mbValue = value; }
-        }
-    }
-    
     public class Appliance
     {
         #region Private Members
@@ -648,31 +614,73 @@ namespace ApplianceTMR
         { 
             try
             {
-                Storyboard sb = new Storyboard();
-
-                DoubleAnimation FadeOut = new DoubleAnimation();
-                FadeOut.Duration = new Duration(TimeSpan.FromMilliseconds(400));
-                //FadeOut.From = timerTile.ApplianceTime.Opacity; ;
-                FadeOut.To = 0.0;
-
-                //Storyboard.SetTarget(FadeOut, timerTile.ApplianceTime);
-                Storyboard.SetTargetProperty(FadeOut, "(TextBlock.Opacity)");
-                sb.Children.Add(FadeOut);
-                sb.Completed += (sendr, e) =>
+                string sValue = "";
+      
+                //HOURS
+                if (Time.Hours.ToString() != timerTile.TimeHours.Text)
                 {
-                    Storyboard sbFadeIn = new Storyboard();
-                    DoubleAnimation FadeIn = new DoubleAnimation();
-                    FadeIn.Duration = new Duration(TimeSpan.FromMilliseconds(400));
-                    FadeIn.From = 0.0;
-                    FadeIn.To = 1.0;
-                    //timerTile.ApplianceTime.Text = sTime;
-                    
-                    //Storyboard.SetTarget(FadeIn, timerTile.ApplianceTime);
-                    Storyboard.SetTargetProperty(FadeIn, "(TextBlock.Opacity)");
-                    sbFadeIn.Children.Add(FadeIn);
-                    sbFadeIn.Begin();
-                };
-                sb.Begin();
+                    if (Time.Hours > 0)
+                    {
+                        sValue = Time.Hours.ToString();
+                        TextChange(timerTile.TimeHoursColon, ":");
+                    }
+                    TextChange(timerTile.TimeHours, sValue);
+                }
+
+                //MINUTES - TENS
+                if (Time.Minutes.ToString("00").Substring(0, 1) != timerTile.TimeMinutesTen.Text)
+                {
+                    if (Time.Minutes.ToString("00").Substring(0, 1) == "0")
+                    {
+                        //If there are hours, show the minutes
+                        if (Time.Hours > 0)
+                        {
+                            sValue = "0";
+                        }
+                        else
+                        {
+                            sValue = "";
+                        }    
+                    }
+                    else
+                    {
+                        sValue = Time.Minutes.ToString("00").Substring(0, 1);
+                    }
+                    TextChange(timerTile.TimeMinutesTen, sValue);
+                }
+
+                //MINUTES - ONES
+                if (Time.Minutes.ToString("00").Substring(1, 1) != timerTile.TimeMinutesOne.Text)
+                {
+                    if (Time.Minutes.ToString("00").Substring(1, 1) == "0")
+                    {
+                        if (Time.Hours > 0)
+                        {
+                            sValue = "0";
+                        }
+                        else
+                        {
+                            sValue = "";
+                        }  
+                    }
+                    else
+                    {
+                        sValue = Time.Minutes.ToString("00").Substring(1, 1);
+                    }
+                    TextChange(timerTile.TimeMinutesOne, sValue);
+                }
+
+                //SECONDS - TENS
+                if (Time.Seconds.ToString("00").Substring(0, 1) != timerTile.TimeSecondsTen.Text)
+                {
+                    TextChange(timerTile.TimeSecondsTen, Time.Seconds.ToString("00").Substring(0, 1));
+                }
+
+                //SECONDS - ONES
+                if (Time.Seconds.ToString("00").Substring(1, 1) != timerTile.TimeSecondsOne.Text)
+                {
+                    TextChange(timerTile.TimeSecondsOne, Time.Seconds.ToString("00").Substring(1, 1));
+                }
             }
             catch (Exception ex)
             {
@@ -720,12 +728,8 @@ namespace ApplianceTMR
                             if (appl.IsRunning == true)
                             {
                                 appl.Time = appl.Time.Add(new TimeSpan(0, 0, -1));
-
-                                if (appl.Time.Seconds == 0)
-                                {
-                                    applTemp = appl;
-                                    progress.Report(null);
-                                }
+                                applTemp = appl;
+                                progress.Report(null);
                             }
                         }
                     }
@@ -759,6 +763,47 @@ namespace ApplianceTMR
             }
         }
 
+        private void TextChange(TextBlock UITextBlock, string Text)
+        {
+            try
+            {
+                Storyboard sbFadeOut = new Storyboard();
+                DoubleAnimation animFadeOut = new DoubleAnimation();
+                TimeSpan tsTextFade = new TimeSpan(0, 0, 0, 0, 300);
+
+                animFadeOut.Duration = new Duration(tsTextFade);
+                animFadeOut.From = 1.0;
+                animFadeOut.To = 0.0;
+
+                Storyboard.SetTarget(animFadeOut, UITextBlock);
+                Storyboard.SetTargetProperty(animFadeOut, "(TextBlock.Opacity)");
+
+                sbFadeOut.Children.Add(animFadeOut);
+
+                sbFadeOut.Completed +=
+                    (sndr, evtArgs) =>
+                    {
+                        UITextBlock.Text = Text;
+                        Storyboard sbFadeIn = new Storyboard();
+                        DoubleAnimation animFadeIn = new DoubleAnimation();
+
+                        animFadeIn.Duration = new Duration(tsTextFade);
+                        animFadeIn.From = 0.0;
+                        animFadeIn.To = 1.0;
+
+                        Storyboard.SetTarget(animFadeIn, UITextBlock);
+                        Storyboard.SetTargetProperty(animFadeIn, "(TextBlock.Opacity)");
+
+                        sbFadeIn.Children.Add(animFadeIn);
+                        sbFadeIn.Begin();
+                    };
+                sbFadeOut.Begin();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         public void SettingsSelected()
         {
             try
