@@ -12,7 +12,7 @@ namespace ApplianceTMR
 {
     public sealed partial class TimerTile : UserControl
     {
-        private Windows.UI.Input.PointerPoint mStartingPoint;
+        //private Windows.UI.Input.PointerPoint mStartingPoint;
         private MainPage mMainPage;
 
 
@@ -51,12 +51,12 @@ namespace ApplianceTMR
 
         private void TileBase_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            mStartingPoint = e.GetCurrentPoint(this);
+            //mStartingPoint = e.GetCurrentPoint(this);
         }
 
         private void TileBase_PointerExited(object sender, PointerRoutedEventArgs e)
         {
-            mMainPage.TimerEngine.TimerSwipe(this, mStartingPoint, e.GetCurrentPoint(this));
+            //mMainPage.TimerEngine.TimerSwipe(this, mStartingPoint, e.GetCurrentPoint(this));
         }
 
         private void Close_PointerPressed(object sender, PointerRoutedEventArgs e)

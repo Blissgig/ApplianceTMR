@@ -8,10 +8,10 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" 
     >
-
+    
     <Canvas Name="Timers" x:FieldModifier="public" PointerEntered="Timers_PointerEntered" PointerExited="Timers_PointerExited" >
         <Canvas.Background>
-            <ImageBrush ImageSource="/Assets/SmallLogo.scale-240.png" 
+            <ImageBrush ImageSource="/Assets/Logo.scale-100.png" 
                         AlignmentX="Center" 
                         AlignmentY="Center" 
                         Stretch="None" />

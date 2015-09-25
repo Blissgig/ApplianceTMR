@@ -36,6 +36,7 @@ namespace ApplianceTMR
         private ApplianceType mtType = ApplianceType.EggTimer;
         #endregion
 
+        #region Constructors
         public Appliance()
         {
             this.Name = "TimerTile" + Guid.NewGuid().ToString().Replace("-", "");
@@ -53,6 +54,7 @@ namespace ApplianceTMR
             this.mtsTime = Time;
             this.Type = Type;
         }
+        #endregion
 
         #region Public Properties
         public string Name
@@ -131,7 +133,8 @@ namespace ApplianceTMR
             get {return mTileColor;}
         }
         #endregion
-        
+
+        #region Methods
         public ATMREngine(MainPage mainPage)
         {
             this.mMainPage = mainPage;
@@ -495,7 +498,8 @@ namespace ApplianceTMR
                     return;
                 }
 
-                if (Math.Abs(StartingPoint.Position.X - EndingPoint.Position.X) < 25)
+                byte bDiff = 25;
+                if ((Math.Abs(StartingPoint.Position.X - EndingPoint.Position.X) < bDiff) && (Math.Abs(StartingPoint.Position.Y - EndingPoint.Position.Y) < bDiff))
                 {
                     //Small amount of moment, must be just a press
                     TimerStartPause(timerTile);
@@ -970,6 +974,9 @@ namespace ApplianceTMR
         {
             try
             {
+
+
+
                 //Only 3 timers added, so need to move anything.
                 //TODO: this should be judged on size, not just count.
                 if (this.mMainPage.Timers.Children.Count < 4) { return; }
@@ -1113,5 +1120,6 @@ namespace ApplianceTMR
         {
             System.Diagnostics.Debug.WriteLine(ex.Message);
         }
+        #endregion
     }
 }
