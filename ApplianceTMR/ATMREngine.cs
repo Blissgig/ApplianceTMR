@@ -449,8 +449,6 @@ namespace ApplianceTMR
         {
             try
             {
-                this.mMainPage.NewTimer.IsEnabled = false;
-
                 AppBar dBottomAppBar = this.mMainPage.BottomAppBar;
                 Appliance newAppliance = ApplianceByType(Type);
                 double dSize = Convert.ToDouble((this.mMainPage.ActualHeight - (dBottomAppBar.ActualHeight * 2)) / 3);
@@ -458,31 +456,14 @@ namespace ApplianceTMR
                 timerTile.Width = this.mMainPage.ActualWidth;
                 timerTile.Height = dSize;
                 timerTile.Name = newAppliance.Name;
+
                 this.mMainPage.Timers.Children.Add(timerTile);
 
                 TimerSetTime(timerTile, newAppliance.Time);
 
                 Appliances.Add(newAppliance);
-                
-                Storyboard AddTile = new Storyboard();
-                QuadraticEase ease = new QuadraticEase();
-                ease.EasingMode = EasingMode.EaseIn;
-                
-                DoubleAnimation MoveAnimation = new DoubleAnimation();
-                MoveAnimation.Duration = new Duration(TimeSpan.FromMilliseconds(250));
-                MoveAnimation.From = this.mMainPage.ActualHeight;
-                MoveAnimation.To = ((Appliances.Count -1) * dSize);
-                MoveAnimation.EasingFunction = ease;
 
-                Storyboard.SetTarget(MoveAnimation, timerTile);
-                Storyboard.SetTargetProperty(MoveAnimation, "(Canvas.Top)");
-
-                AddTile.Children.Add(MoveAnimation);
-                AddTile.Completed += (sendr, args) =>
-                {
-                    this.mMainPage.NewTimer.IsEnabled = true;
-                };
-                AddTile.Begin();
+                TimerMove(timerTile, this.mMainPage.ActualHeight, ((Appliances.Count - 1) * dSize));
             }
             catch (Exception ex)
             {
@@ -502,8 +483,6 @@ namespace ApplianceTMR
                 {
                     return;
                 }
-
-                //var v = Math.Abs(StartingPoint.Position.X - EndingPoint.Position.X);
 
                 if (Math.Abs(StartingPoint.Position.X - EndingPoint.Position.X) < 25)
                 {
@@ -788,6 +767,7 @@ namespace ApplianceTMR
                     (sendr, evts) =>
                     {
                         Appliance appl = Appliances.Find(e => (e.Name == timerTile.Name));
+                        double dTop = 0;
 
                         //Just in case
                         if (appl != null)
@@ -796,9 +776,50 @@ namespace ApplianceTMR
                             appl = null;
                         }
                         mMainPage.Timers.Children.Remove(timerTile);
-                        
+
+                        //Move all other timers up
+                        if (mMainPage.Timers.Children.Count > 0)
+                        {
+                            foreach(TimerTile tmrTile in mMainPage.Timers.Children)
+                            {
+                                var transform = tmrTile.TransformToVisual(mMainPage.Timers);
+                                var controlPosition = transform.TransformPoint(new Point(0, 0));
+
+                                if (controlPosition.Y > dTop)
+                                {
+                                    TimerMove(tmrTile, controlPosition.Y ,dTop); 
+                                    dTop = controlPosition.Y;
+                                }
+                            }
+                        }
                     };
                 sbClose.Begin();
+            }
+            catch (Exception ex)
+            {
+                logException(ex);
+            }
+        }
+
+        private void TimerMove(TimerTile timerTile, double Start, double Top)
+        {
+            try
+            {
+                Storyboard MoveTile = new Storyboard();
+                QuadraticEase ease = new QuadraticEase();
+                ease.EasingMode = EasingMode.EaseIn;
+
+                DoubleAnimation MoveAnimation = new DoubleAnimation();
+                MoveAnimation.Duration = new Duration(TimeSpan.FromMilliseconds(250));
+                MoveAnimation.From = Start;
+                MoveAnimation.To = Top;
+                MoveAnimation.EasingFunction = ease;
+
+                Storyboard.SetTarget(MoveAnimation, timerTile);
+                Storyboard.SetTargetProperty(MoveAnimation, "(Canvas.Top)");
+
+                MoveTile.Children.Add(MoveAnimation);
+                MoveTile.Begin();
             }
             catch (Exception ex)
             {
