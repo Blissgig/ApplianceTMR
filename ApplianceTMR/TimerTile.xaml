@@ -21,6 +21,9 @@
             </Grid.ColumnDefinitions>
 
             <Image Name="ApplianceIcon" Grid.Row="0" Grid.Column="0" Margin="8" x:FieldModifier="public" />
+
+            <TextBlock Name="Close" Text="X" Grid.Row="0" Grid.Column="1" FontSize="24" TextAlignment="Right" PointerPressed="Close_PointerPressed" />
+            
             <Grid Name="TimeGrid" Grid.Row="0" Grid.Column="1" x:FieldModifier="public">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -48,4 +51,5 @@
             </Grid>
         </Grid>
     </Border>
+
 </UserControl>

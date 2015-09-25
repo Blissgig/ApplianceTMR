@@ -58,5 +58,10 @@ namespace ApplianceTMR
         {
             mMainPage.TimerEngine.TimerSwipe(this, mStartingPoint, e.GetCurrentPoint(this));
         }
+
+        private void Close_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            mMainPage.TimerEngine.TimerClose(this);
+        }
     }
 }

@@ -471,7 +471,7 @@ namespace ApplianceTMR
                 DoubleAnimation MoveAnimation = new DoubleAnimation();
                 MoveAnimation.Duration = new Duration(TimeSpan.FromMilliseconds(250));
                 MoveAnimation.From = this.mMainPage.ActualHeight;
-                MoveAnimation.To = (Appliances.Count * dSize);
+                MoveAnimation.To = ((Appliances.Count -1) * dSize);
                 MoveAnimation.EasingFunction = ease;
 
                 Storyboard.SetTarget(MoveAnimation, timerTile);
@@ -621,6 +621,8 @@ namespace ApplianceTMR
         { 
             try
             {
+                if (timerTile == null) { return; } //In case user selects SETTINGS while timers are running.
+
                 string sValue = "";
       
                 //HOURS
@@ -766,6 +768,42 @@ namespace ApplianceTMR
 	        {
 		        logException(ex);
 	        }
+        }
+
+        public void TimerClose(TimerTile timerTile)
+        {
+            try
+            {
+                Storyboard sbClose = new Storyboard();
+                DoubleAnimation animClose = new DoubleAnimation();
+                animClose.Duration = new Duration(TimeSpan.FromMilliseconds(400));
+                animClose.From = 1.0;
+                animClose.To = 0.0;
+
+                Storyboard.SetTarget(animClose, timerTile);
+                Storyboard.SetTargetProperty(animClose, "(UserControl.Opacity)");
+                sbClose.Children.Add(animClose);
+
+                sbClose.Completed +=
+                    (sendr, evts) =>
+                    {
+                        Appliance appl = Appliances.Find(e => (e.Name == timerTile.Name));
+
+                        //Just in case
+                        if (appl != null)
+                        {
+                            Appliances.Remove(appl);
+                            appl = null;
+                        }
+                        mMainPage.Timers.Children.Remove(timerTile);
+                        
+                    };
+                sbClose.Begin();
+            }
+            catch (Exception ex)
+            {
+                logException(ex);
+            }
         }
 
         private void ApplyTime(Appliance appl)
