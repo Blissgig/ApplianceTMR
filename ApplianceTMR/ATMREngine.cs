@@ -125,6 +125,7 @@ namespace ApplianceTMR
         private SolidColorBrush mTileColor = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 49, 123, 193));
         private Windows.UI.Input.PointerPoint mStartingPoint;
         private MainPage mMainPage;
+        private double mdTileSize = 100;
         #endregion
 
         #region Public Properties
@@ -137,7 +138,16 @@ namespace ApplianceTMR
         #region Methods
         public ATMREngine(MainPage mainPage)
         {
-            this.mMainPage = mainPage;
+            try
+            {
+                this.mMainPage = mainPage;
+                AppBar dBottomAppBar = this.mMainPage.BottomAppBar;
+                mdTileSize = Convert.ToDouble((this.mMainPage.ActualHeight - (dBottomAppBar.ActualHeight * 2)) / 3);
+            }
+            catch (Exception ex)
+            {
+                logException(ex);
+            }
          }
 
         public Appliance ApplianceByType(Appliance.ApplianceType Type)
@@ -439,7 +449,7 @@ namespace ApplianceTMR
                 string[] types = Enum.GetNames(typeof(Appliance.ApplianceType)); 
                 foreach (string type in types)
                 {
-                    TimerNew(this.ApplianceTypeFromType(type));
+                    TimerAdd(this.ApplianceTypeFromType(type));
                 } 
             }
             catch (Exception ex)
@@ -448,17 +458,15 @@ namespace ApplianceTMR
             }
         }
 
-        public void TimerNew(Appliance.ApplianceType Type)
+        public void TimerAdd(Appliance.ApplianceType Type)
         {
             try
             {
                 double dTop = 0;
-                AppBar dBottomAppBar = this.mMainPage.BottomAppBar;
                 Appliance newAppliance = ApplianceByType(Type);
-                double dSize = Convert.ToDouble((this.mMainPage.ActualHeight - (dBottomAppBar.ActualHeight * 2)) / 3);
                 TimerTile timerTile = new TimerTile(this.TileColor, this.ApplianceIconFromType(Type), mMainPage);
                 timerTile.Width = this.mMainPage.ActualWidth;
-                timerTile.Height = dSize;
+                timerTile.Height = this.mdTileSize;
                 timerTile.Name = newAppliance.Name;
 
                 TimerSetTime(timerTile, newAppliance.Time);
@@ -467,12 +475,12 @@ namespace ApplianceTMR
 
                 if (Appliances.Count > 1)
                 {
-                    dTop = ((Appliances.Count - 1) * dSize);
+                    dTop = ((Appliances.Count - 1) * this.mdTileSize);
                     TimerTile tile = (TimerTile)this.mMainPage.Timers.Children[(this.mMainPage.Timers.Children.Count - 1)];
                     GeneralTransform transform = tile.TransformToVisual(mMainPage.Timers);
                     Point controlPosition = transform.TransformPoint(new Point(0, 0));
 
-                    dTop = (controlPosition.Y + dSize);
+                    dTop = (controlPosition.Y + this.mdTileSize);
                 }
 
                 this.mMainPage.Timers.Children.Add(timerTile); //Must be after the check of top, just above here
@@ -484,96 +492,7 @@ namespace ApplianceTMR
                 logException(ex);
             }
         }
-
-        public void TimerSwipe(
-            TimerTile timerTile,
-            PointerPoint StartingPoint,
-            PointerPoint EndingPoint)
-        {
-            try
-            {
-                //Make sure the Y value is not too large. If so the user is scrolling up/down.
-                if ((StartingPoint.Position.Y + EndingPoint.Position.Y) > timerTile.ActualHeight)
-                {
-                    return;
-                }
-
-                byte bDiff = 25;
-                if ((Math.Abs(StartingPoint.Position.X - EndingPoint.Position.X) < bDiff) && (Math.Abs(StartingPoint.Position.Y - EndingPoint.Position.Y) < bDiff))
-                {
-                    //Small amount of moment, must be just a press
-                    TimerStartPause(timerTile);
-                }
-                else
-                {
-                    Int16 iValue = 1;
-                    Appliance applFind = Appliances.Find(e => (e.Name == timerTile.Name));
-
-                    if (StartingPoint.Position.X < (timerTile.ActualWidth / 2))
-                    {
-                        //Affecting Icon
-                        if (EndingPoint.Position.X < StartingPoint.Position.X)
-                        {
-                            iValue = -1;
-                        }
-
-                        string[] types = Enum.GetNames(typeof(Appliance.ApplianceType));
-                        string type = "";
-
-                        for (Byte b = 0; b < types.Count(); b++)
-                        {
-                            type = types[b];
-
-                            if (type == applFind.Type.ToString())
-                            {
-                                if ((b + iValue) > type.Count())
-                                {
-                                    type = types[0];
-                                }
-                                else if ((b + iValue) < 0)
-                                {
-                                    type = types[(types.Count() - 1)];
-                                }
-                                else
-                                {
-                                    type = types[b + iValue];
-                                }
-                                break;
-                            }
-                        }
-
-                        Appliances.Remove(applFind);  //Remove the current item, then add the new one below.
-                        applFind.Type = ApplianceTypeFromType(type);
-                        applFind = ApplianceByType(applFind.Type);
-                        timerTile.Name = applFind.Name;
-                        Appliances.Add(applFind);
-                        TimerSetIcon(timerTile, applFind);
-                        TimerSetTime(timerTile, applFind.Time);
-                    }
-                    else
-                    {
-                        //Affecting Time
-                        if (EndingPoint.Position.X < StartingPoint.Position.X)
-                        {
-                            iValue = -1;
-                        }
-                        TimeSpan timeSpan = applFind.Time.Add(new TimeSpan(0, iValue, 0));
-
-                        //To insure that the value never gets set below zero
-                        if (timeSpan.TotalMinutes > -1)
-                        {
-                            applFind.Time = timeSpan;
-                            TimerSetTime(timerTile, timeSpan);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                logException(ex);
-            }
-        }
-        
+   
         public void TimerSetIcon(TimerTile timerTile, Appliance appl)
         {
             try
@@ -974,19 +893,60 @@ namespace ApplianceTMR
         {
             try
             {
-
-
-
-                //Only 3 timers added, so need to move anything.
-                //TODO: this should be judged on size, not just count.
-                if (this.mMainPage.Timers.Children.Count < 4) { return; }
-
-                
-                TimerTile tile = (TimerTile)this.mMainPage.Timers.Children[0];
-                double Change = tile.ActualHeight; //Default value for moving down
+                byte bDiff = 25;
                 GeneralTransform transform;
                 Point controlPosition;
 
+
+                //-- TIMER START & STOP --
+                if ((Math.Abs(mStartingPoint.Position.X - EndingPoint.Position.X) < bDiff) && (Math.Abs(mStartingPoint.Position.Y - EndingPoint.Position.Y) < bDiff))
+                {
+                    if (Appliances.Count > 0)
+                    {
+                        foreach(TimerTile timerTile in mMainPage.Timers.Children)
+                        {
+                            transform = timerTile.TransformToVisual(this.mMainPage.Timers);
+                            controlPosition = transform.TransformPoint(new Point(0, 0));
+
+                            if (EndingPoint.Position.Y > controlPosition.Y && EndingPoint.Position.Y < (controlPosition.Y + this.mdTileSize))
+                            {
+                                TimerStartPause(timerTile);
+                                break;
+                            }
+                        }
+                    }
+                    return;
+                }
+
+                //-- SWIPE TILE - CHANGE TIME OR ICON/TYPE --
+                if ((Math.Abs(mStartingPoint.Position.Y - EndingPoint.Position.Y) < bDiff) && (Math.Abs(mStartingPoint.Position.Y - EndingPoint.Position.X) < this.mdTileSize))
+                {
+                    foreach (TimerTile timerTile in mMainPage.Timers.Children)
+                    {
+                        transform = timerTile.TransformToVisual(this.mMainPage.Timers);
+                        controlPosition = transform.TransformPoint(new Point(0, 0));
+
+                        if (EndingPoint.Position.Y > controlPosition.Y && EndingPoint.Position.Y < (controlPosition.Y + this.mdTileSize))
+                        {
+                            Appliance applFind = Appliances.Find(e => (e.Name == timerTile.Name));
+
+                            //Just in case (hey, no one is perfect)
+                            if (applFind != null)
+                            {
+                                TileSwipe(applFind, timerTile, mStartingPoint, EndingPoint);
+                            }
+                            break;
+                        }
+                    }
+                    return;
+                }
+
+                //-- SCROLL UP or DOWN --
+                //Only 3 timers added, so need to move anything.
+                if ((this.mMainPage.Timers.Children.Count * mdTileSize) < this.mMainPage.ActualHeight) { return; }
+                TimerTile tile = (TimerTile)this.mMainPage.Timers.Children[0];
+                double Change = tile.ActualHeight; //Default value for moving down
+  
 
                 if (mStartingPoint.Position.X < EndingPoint.Position.X)
                 {
@@ -1003,7 +963,7 @@ namespace ApplianceTMR
                 {
                     //Down
                     tile = (TimerTile)this.mMainPage.Timers.Children[0];
-                    transform = tile.TransformToVisual(mMainPage.Timers);
+                    transform = tile.TransformToVisual(this.mMainPage.Timers);
                     controlPosition = transform.TransformPoint(new Point(0, 0));
 
                     if (controlPosition.Y == 0) { return; }
@@ -1025,6 +985,79 @@ namespace ApplianceTMR
 
                     TimerMove(tmrTile, controlPosition.Y, (controlPosition.Y + Change));
                 }
+            }
+            catch (Exception ex)
+            {
+                logException(ex);
+            }
+        }
+
+        private void TileSwipe(
+            Appliance appliance,
+            TimerTile timerTile,
+            Windows.UI.Input.PointerPoint StartingPoint,
+            Windows.UI.Input.PointerPoint EndingPoint)
+        {
+            try
+            {
+                Int16 iValue = 1;
+                if (StartingPoint.Position.X < (timerTile.ActualWidth / 2))
+                    {
+                        //Affecting Icon
+                        if (EndingPoint.Position.X < StartingPoint.Position.X)
+                        {
+                            iValue = -1;
+                        }
+
+                        string[] types = Enum.GetNames(typeof(Appliance.ApplianceType));
+                        string type = "";
+
+                        for (Byte b = 0; b < types.Count(); b++)
+                        {
+                            type = types[b];
+
+                            if (type == appliance.Type.ToString())
+                            {
+                                if ((b + iValue) > type.Count())
+                                {
+                                    type = types[0];
+                                }
+                                else if ((b + iValue) < 0)
+                                {
+                                    type = types[(types.Count() - 1)];
+                                }
+                                else
+                                {
+                                    type = types[b + iValue];
+                                }
+                                break;
+                            }
+                        }
+
+                        Appliances.Remove(appliance);  //Remove the current item, then add the new one below.
+                        appliance.Type = ApplianceTypeFromType(type);
+                        appliance = ApplianceByType(appliance.Type);
+                        timerTile.Name = appliance.Name;
+                        Appliances.Add(appliance);
+                        TimerSetIcon(timerTile, appliance);
+                        TimerSetTime(timerTile, appliance.Time);
+                    }
+                    else
+                    {
+                        //Affecting Time
+                        if (EndingPoint.Position.X < StartingPoint.Position.X)
+                        {
+                            iValue = -1;
+                        }
+                        TimeSpan timeSpan = appliance.Time.Add(new TimeSpan(0, iValue, 0));
+
+                        //To insure that the value never gets set below zero
+                        if (timeSpan.TotalMinutes > -1)
+                        {
+                            appliance.Time = timeSpan;
+                            TimerSetTime(timerTile, timeSpan);
+                        }
+                    }
             }
             catch (Exception ex)
             {

@@ -29,9 +29,20 @@ namespace ApplianceTMR
 
             this.NavigationCacheMode = NavigationCacheMode.Required;
 
-            TimerEngine = new ATMREngine(this);
+            Loaded += new RoutedEventHandler(MainPage_Loaded);
         }
 
+        private void MainPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                TimerEngine = new ATMREngine(this);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         /// <summary>
         /// Invoked when this page is about to be displayed in a Frame.
         /// </summary>
@@ -50,7 +61,7 @@ namespace ApplianceTMR
 
         private void NewTimer_Click(object sender, RoutedEventArgs e)
         {
-            TimerEngine.TimerNew(Appliance.ApplianceType.Fridge);
+            TimerEngine.TimerAdd(Appliance.ApplianceType.Fridge);
         }
 
         private void Settings_Click(object sender, RoutedEventArgs e)

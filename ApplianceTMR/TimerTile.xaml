@@ -10,7 +10,7 @@
     d:DesignWidth="480"
     >
     <Border Name="TileBorder" BorderThickness="1" CornerRadius="16">
-        <Grid Name="TileBase" Margin="8" PointerEntered="TileBase_PointerEntered" PointerExited="TileBase_PointerExited">
+        <Grid Name="TileBase" Margin="8">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
@@ -22,8 +22,8 @@
 
             <Image Name="ApplianceIcon" Grid.Row="0" Grid.Column="0" Margin="8" x:FieldModifier="public" />
 
-            <TextBlock Name="Close" Text="X" Grid.Row="0" Grid.Column="1" FontSize="24" Width="18" Height="24" HorizontalAlignment="Right" VerticalAlignment="Top" TextAlignment="Center" PointerPressed="Close_PointerPressed" />
-            
+            <TextBlock Name="Close" Text="X" Grid.Row="0" Grid.Column="1" FontSize="26" Width="30" Height="30" HorizontalAlignment="Right" VerticalAlignment="Top" TextAlignment="Center" Canvas.ZIndex="1" PointerPressed="Close_PointerPressed" />
+            <Ellipse Name="CloseEllipse" Fill="White" Grid.Row="0" Grid.Column="1" Width="30" Height="30" HorizontalAlignment="Right" VerticalAlignment="Top" Canvas.ZIndex="0"/>
             <Grid Name="TimeGrid" Grid.Row="0" Grid.Column="1" x:FieldModifier="public">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -41,13 +41,13 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Name="TimeHours"        Grid.Row="1" Grid.Column="1" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" TextWrapping="Wrap" Opacity="0.0" x:FieldModifier="public" />
-                <TextBlock Name="TimeHoursColon"   Grid.Row="1" Grid.Column="2" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" TextWrapping="Wrap" Opacity="0.0" x:FieldModifier="public" />
-                <TextBlock Name="TimeMinutesTen"   Grid.Row="1" Grid.Column="3" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" TextWrapping="Wrap" Opacity="0.0" x:FieldModifier="public" />
-                <TextBlock Name="TimeMinutesOne"   Grid.Row="1" Grid.Column="4" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" TextWrapping="Wrap" Opacity="0.0" x:FieldModifier="public" />
-                <TextBlock Name="TimeMinutesColon" Grid.Row="1" Grid.Column="5" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" TextWrapping="Wrap" Opacity="1.0" x:FieldModifier="public" Text=":" />
-                <TextBlock Name="TimeSecondsTen"   Grid.Row="1" Grid.Column="6" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" TextWrapping="Wrap" Opacity="1.0" x:FieldModifier="public" />
-                <TextBlock Name="TimeSecondsOne"   Grid.Row="1" Grid.Column="7" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" TextWrapping="Wrap" Opacity="1.0" x:FieldModifier="public" />
+                <TextBlock Name="TimeHours"        Grid.Row="1" Grid.Column="1" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" Opacity="0.0" x:FieldModifier="public" />
+                <TextBlock Name="TimeHoursColon"   Grid.Row="1" Grid.Column="2" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" Opacity="0.0" x:FieldModifier="public" />
+                <TextBlock Name="TimeMinutesTen"   Grid.Row="1" Grid.Column="3" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" Opacity="0.0" x:FieldModifier="public" />
+                <TextBlock Name="TimeMinutesOne"   Grid.Row="1" Grid.Column="4" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" Opacity="0.0" x:FieldModifier="public" />
+                <TextBlock Name="TimeMinutesColon" Grid.Row="1" Grid.Column="5" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" Opacity="1.0" x:FieldModifier="public" Text=":" />
+                <TextBlock Name="TimeSecondsTen"   Grid.Row="1" Grid.Column="6" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" Opacity="1.0" x:FieldModifier="public" />
+                <TextBlock Name="TimeSecondsOne"   Grid.Row="1" Grid.Column="7" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" Opacity="1.0" x:FieldModifier="public" />
             </Grid>
         </Grid>
     </Border>
