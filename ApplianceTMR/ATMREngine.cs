@@ -449,6 +449,7 @@ namespace ApplianceTMR
         {
             try
             {
+                double dTop = 0;
                 AppBar dBottomAppBar = this.mMainPage.BottomAppBar;
                 Appliance newAppliance = ApplianceByType(Type);
                 double dSize = Convert.ToDouble((this.mMainPage.ActualHeight - (dBottomAppBar.ActualHeight * 2)) / 3);
@@ -457,13 +458,23 @@ namespace ApplianceTMR
                 timerTile.Height = dSize;
                 timerTile.Name = newAppliance.Name;
 
-                this.mMainPage.Timers.Children.Add(timerTile);
-
                 TimerSetTime(timerTile, newAppliance.Time);
 
                 Appliances.Add(newAppliance);
 
-                TimerMove(timerTile, this.mMainPage.ActualHeight, ((Appliances.Count - 1) * dSize));
+                if (Appliances.Count > 1)
+                {
+                    dTop = ((Appliances.Count - 1) * dSize);
+                    TimerTile tile = (TimerTile)this.mMainPage.Timers.Children[(this.mMainPage.Timers.Children.Count - 1)];
+                    GeneralTransform transform = tile.TransformToVisual(mMainPage.Timers);
+                    Point controlPosition = transform.TransformPoint(new Point(0, 0));
+
+                    dTop = (controlPosition.Y + dSize);
+                }
+
+                this.mMainPage.Timers.Children.Add(timerTile); //Must be after the check of top, just above here
+
+                TimerMove(timerTile, this.mMainPage.ActualHeight, dTop);
             }
             catch (Exception ex)
             {
@@ -801,7 +812,7 @@ namespace ApplianceTMR
             }
         }
 
-        private void TimerMove(TimerTile timerTile, double Start, double Top)
+        private void TimerMove(TimerTile timerTile, double Start, double End)
         {
             try
             {
@@ -812,7 +823,7 @@ namespace ApplianceTMR
                 DoubleAnimation MoveAnimation = new DoubleAnimation();
                 MoveAnimation.Duration = new Duration(TimeSpan.FromMilliseconds(250));
                 MoveAnimation.From = Start;
-                MoveAnimation.To = Top;
+                MoveAnimation.To = End;
                 MoveAnimation.EasingFunction = ease;
 
                 Storyboard.SetTarget(MoveAnimation, timerTile);
@@ -959,13 +970,53 @@ namespace ApplianceTMR
         {
             try
             {
-                if (mStartingPoint.Position.X > EndingPoint.Position.X)
+                //Only 3 timers added, so need to move anything.
+                //TODO: this should be judged on size, not just count.
+                if (this.mMainPage.Timers.Children.Count < 4) { return; }
+
+                
+                TimerTile tile = (TimerTile)this.mMainPage.Timers.Children[0];
+                double Change = tile.ActualHeight; //Default value for moving down
+                GeneralTransform transform;
+                Point controlPosition;
+
+
+                if (mStartingPoint.Position.X < EndingPoint.Position.X)
                 {
-                    System.Diagnostics.Debug.WriteLine("down");
+                    //Move up
+                    Change = -tile.ActualHeight;
+                }
+
+
+                //To avoid moving tiles out of view:
+                //If moving down, check if the 1st item is at 0,
+                //If moving up, check that the last item is at bottom
+                //in either case, stop scroll
+                if (Change > 0)
+                {
+                    //Down
+                    tile = (TimerTile)this.mMainPage.Timers.Children[0];
+                    transform = tile.TransformToVisual(mMainPage.Timers);
+                    controlPosition = transform.TransformPoint(new Point(0, 0));
+
+                    if (controlPosition.Y == 0) { return; }
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine("up"); 
+                    //Up
+                    tile = (TimerTile)this.mMainPage.Timers.Children[(this.mMainPage.Timers.Children.Count - 1)];
+                    transform = tile.TransformToVisual(mMainPage.Timers);
+                    controlPosition = transform.TransformPoint(new Point(0, 0));
+
+                    if ((controlPosition.Y + tile.ActualHeight) < this.mMainPage.ActualHeight) { return; }
+                }
+
+                foreach (TimerTile tmrTile in mMainPage.Timers.Children)
+                {
+                    transform = tmrTile.TransformToVisual(mMainPage.Timers);
+                    controlPosition = transform.TransformPoint(new Point(0, 0));
+
+                    TimerMove(tmrTile, controlPosition.Y, (controlPosition.Y + Change));
                 }
             }
             catch (Exception ex)
@@ -973,7 +1024,6 @@ namespace ApplianceTMR
                 logException(ex);
             }
         }
-
 
         /// <summary>
         /// Code found here.  Just want to send a notification and this does it, nice and simple.
@@ -1008,7 +1058,7 @@ namespace ApplianceTMR
             }
         }
 
-        public ToastNotification CreateTextOnlyToast(string toastHeading, string toastBody)
+        public ToastNotification CreateTextOnlyToast(string Title, string Body)
         {
             ToastNotification toastReturn = null;
 
@@ -1025,8 +1075,8 @@ namespace ApplianceTMR
 
                 // Set the text on the toast. 
                 // The first line of text in the ToastText02 template is treated as header text, and will be bold.
-                toastTextElements[0].AppendChild(toastXml.CreateTextNode(toastHeading));
-                toastTextElements[1].AppendChild(toastXml.CreateTextNode(toastBody));
+                toastTextElements[0].AppendChild(toastXml.CreateTextNode(Title));
+                toastTextElements[1].AppendChild(toastXml.CreateTextNode(Body));
 
                 // Set the duration on the toast
                 IXmlNode toastNode = toastXml.SelectSingleNode("/toast");

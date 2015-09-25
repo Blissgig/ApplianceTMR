@@ -22,7 +22,7 @@
 
             <Image Name="ApplianceIcon" Grid.Row="0" Grid.Column="0" Margin="8" x:FieldModifier="public" />
 
-            <TextBlock Name="Close" Text="X" Grid.Row="0" Grid.Column="1" FontSize="24" TextAlignment="Right" PointerPressed="Close_PointerPressed" />
+            <TextBlock Name="Close" Text="X" Grid.Row="0" Grid.Column="1" FontSize="24" Width="18" Height="24" HorizontalAlignment="Right" VerticalAlignment="Top" TextAlignment="Center" PointerPressed="Close_PointerPressed" />
             
             <Grid Name="TimeGrid" Grid.Row="0" Grid.Column="1" x:FieldModifier="public">
                 <Grid.RowDefinitions>
