@@ -9,6 +9,7 @@
     d:DesignHeight="160"
     d:DesignWidth="480"
     >
+    
     <Border Name="TileBorder" BorderThickness="1" CornerRadius="16">
         <Grid Name="TileBase" Margin="8">
             <Grid.RowDefinitions>

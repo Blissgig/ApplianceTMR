@@ -21,7 +21,6 @@
     <Page.BottomAppBar>
         <CommandBar>
             <AppBarButton x:Name="NewTimer" Icon="Add" Label="New"  x:FieldModifier="public" Click="NewTimer_Click"/>
-            <AppBarButton x:Name="Settings" Icon="Setting" Label="Settings" x:FieldModifier="public" Click="Settings_Click"/>
             <AppBarButton x:Name="About" Label="About" Click="About_Click" Icon="Account" />
         </CommandBar>
     </Page.BottomAppBar>

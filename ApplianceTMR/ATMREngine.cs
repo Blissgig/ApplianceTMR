@@ -21,10 +21,15 @@ using Windows.ApplicationModel.Background; //For toast
 using System.Threading;
 using Windows.UI.Core;
 using System.Xml.Linq;
+using System.Globalization;
+using Windows.UI.Xaml.Data;
+
 
 
 namespace ApplianceTMR
 {
+
+
     public class Appliance
     {
         #region Private Members
@@ -120,7 +125,6 @@ namespace ApplianceTMR
     {
         #region Private Members
         private List<Appliance> Appliances = new List<Appliance>();
-        private bool mbHomePage = true;
         private bool mbIsRunning = false;
         private SolidColorBrush mTileColor = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 49, 123, 193));
         private Windows.UI.Input.PointerPoint mStartingPoint;
@@ -537,7 +541,7 @@ namespace ApplianceTMR
                 if (timerTile == null) { return; } //In case user selects SETTINGS while timers are running.
 
                 string sValue = "";
-      
+      //TODO: set the columns to ZERO
                 //HOURS
                 if (Time.Hours.ToString() != timerTile.TimeHours.Text)
                 {
@@ -824,35 +828,6 @@ namespace ApplianceTMR
             catch (Exception)
             {
                 throw;
-            }
-        }
-
-        public void SettingsSelected()
-        {
-            try
-            {
-                if (mbHomePage == true)
-                {
-                    mMainPage.Settings.Icon = new SymbolIcon(Symbol.Home);
-                    mMainPage.Settings.Label = "Home";
-
-                    TimersUnload();
-
-                    TimersLoadDefault();
-                }
-                else
-                {
-                    mMainPage.Settings.Icon = new SymbolIcon(Symbol.Setting);
-                    mMainPage.Settings.Label = "Settings";
-
-                    TimersReload();
-                }
-
-                mbHomePage = !mbHomePage;
-            }
-            catch (Exception ex)
-            {
-                logException(ex);
             }
         }
 
