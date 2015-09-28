@@ -332,7 +332,7 @@ namespace ApplianceTMR
                     case Appliance.ApplianceType.ClothesDryer:
                         appliance.FullName = "Clothes Dryer";
                         appliance.Phrase = "The clothes are dry";
-                        appliance.Time = new TimeSpan(0, 38, 0);
+                        appliance.Time = new TimeSpan(1, 0, 0);
                         break;
 
                     case Appliance.ApplianceType.EggTimer:
@@ -374,7 +374,7 @@ namespace ApplianceTMR
                     case Appliance.ApplianceType.WashingMachine:
                         appliance.FullName = "Washing Machine";
                         appliance.Phrase = "The wash is done";
-                        appliance.Time = new TimeSpan(1, 0, 0);
+                        appliance.Time = new TimeSpan(0, 38, 0);
                         break;
                 }
             }
@@ -490,6 +490,10 @@ namespace ApplianceTMR
                 this.mMainPage.Timers.Children.Add(timerTile); //Must be after the check of top, just above here
 
                 TimerMove(timerTile, this.mMainPage.ActualHeight, dTop);
+
+                //Cleanup
+                newAppliance = null;
+                timerTile = null;
             }
             catch (Exception ex)
             {
@@ -541,7 +545,7 @@ namespace ApplianceTMR
                 if (timerTile == null) { return; } //In case user selects SETTINGS while timers are running.
 
                 string sValue = "";
-      //TODO: set the columns to ZERO
+      
                 //HOURS
                 if (Time.Hours.ToString() != timerTile.TimeHours.Text)
                 {
@@ -645,6 +649,8 @@ namespace ApplianceTMR
                         TimerRun();
                     }
                 }
+
+                appl = null;
             }
             catch (Exception ex)
             {
@@ -782,6 +788,8 @@ namespace ApplianceTMR
                 {
                     TimerSetTime(timerTile, appl.Time);
                 }
+
+                timerTile = null;
             }
             catch (Exception ex)
             {
