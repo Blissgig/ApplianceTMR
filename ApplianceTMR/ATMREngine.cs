@@ -130,6 +130,7 @@ namespace ApplianceTMR
         private Windows.UI.Input.PointerPoint mStartingPoint;
         private MainPage mMainPage;
         private double mdTileSize = 100;
+        private TimeSpan tsPreviousTime = new TimeSpan(-11,-11,-11,-11,-11);
         #endregion
 
         #region Public Properties
@@ -547,7 +548,7 @@ namespace ApplianceTMR
                 string sValue = "";
       
                 //HOURS
-                if (Time.Hours.ToString() != timerTile.TimeHours.Text)
+                if (Time.Hours != tsPreviousTime.Hours)
                 {
                     if (Time.Hours > 0)
                     {
@@ -564,7 +565,7 @@ namespace ApplianceTMR
                 }
 
                 //MINUTES - TENS
-                if (Time.Minutes.ToString("00").Substring(0, 1) != timerTile.TimeMinutesTen.Text)
+                if (Time.Minutes.ToString("00").Substring(0, 1) != tsPreviousTime.Minutes.ToString("00").Substring(0, 1))
                 {
                     if (Time.Minutes.ToString("00").Substring(0, 1) == "0")
                     {
@@ -585,43 +586,24 @@ namespace ApplianceTMR
                         sValue = Time.Minutes.ToString("00").Substring(0, 1);
                         timerTile.TimeGrid.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Star); 
                     }
+
                     TextChange(timerTile.TimeMinutesTen, sValue);
-                }
-                else if (Time.Minutes.ToString("00").Substring(0, 1) == timerTile.TimeMinutesTen.Text && Time.Hours == 0)
-                {
-                    TextChange(timerTile.TimeMinutesTen, "");
-                    timerTile.TimeGrid.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Star); 
                 }
 
                 //MINUTES - ONES
-                if (Time.Minutes.ToString("00").Substring(1, 1) != timerTile.TimeMinutesOne.Text)
+                if (Time.Minutes.ToString("00").Substring(1, 1) != tsPreviousTime.Minutes.ToString("00").Substring(1, 1))
                 {
-                    if (Time.Minutes.ToString("00").Substring(1, 1) == "0")
-                    {
-                        if (Time.Hours > 0)
-                        {
-                            sValue = "0";
-                        }
-                        else
-                        {
-                            sValue = "";
-                        }  
-                    }
-                    else
-                    {
-                        sValue = Time.Minutes.ToString("00").Substring(1, 1);
-                    }
-                    TextChange(timerTile.TimeMinutesOne, sValue);
+                    TextChange(timerTile.TimeMinutesOne, Time.Minutes.ToString("00").Substring(1, 1));
                 }
 
                 //SECONDS - TENS
-                if (Time.Seconds.ToString("00").Substring(0, 1) != timerTile.TimeSecondsTen.Text)
+                if (Time.Seconds.ToString("00").Substring(0, 1) != tsPreviousTime.Seconds.ToString("00").Substring(0, 1))
                 {
                     TextChange(timerTile.TimeSecondsTen, Time.Seconds.ToString("00").Substring(0, 1));
                 }
 
                 //SECONDS - ONES
-                if (Time.Seconds.ToString("00").Substring(1, 1) != timerTile.TimeSecondsOne.Text)
+                if (Time.Seconds.ToString("00").Substring(1, 1) != tsPreviousTime.Seconds.ToString("00").Substring(1, 1))
                 {
                     TextChange(timerTile.TimeSecondsOne, Time.Seconds.ToString("00").Substring(1, 1));
                 }
@@ -629,6 +611,10 @@ namespace ApplianceTMR
             catch (Exception ex)
             {
                 logException(ex);
+            }
+            finally
+            {
+                tsPreviousTime = Time;
             }
         }
 

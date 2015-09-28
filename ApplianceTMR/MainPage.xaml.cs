@@ -31,7 +31,7 @@ namespace ApplianceTMR
 
         private void NewTimer_Click(object sender, RoutedEventArgs e)
         {
-            TimerEngine.TimerAdd(Appliance.ApplianceType.WashingMachine);
+            TimerEngine.TimerAdd(Appliance.ApplianceType.ClothesDryer);
         }
 
         private void About_Click(object sender, RoutedEventArgs e)
