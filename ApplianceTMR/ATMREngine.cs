@@ -656,33 +656,37 @@ namespace ApplianceTMR
             {
                 Appliance appl = Appliances.Find(e => (e.Name == timerTile.Name));
              
-                Appliances.Remove(appl); //Remove previous appliance from list
-                string[] types = Enum.GetNames(typeof(Appliance.ApplianceType));
-                string type = "";
-
-                for (Byte b = 0; b < types.Count(); b++)
+                //Don't change it if its running
+                if (appl.IsRunning == false)
                 {
-                    type = types[b];
+                    Appliances.Remove(appl); //Remove previous appliance from list
+                    string[] types = Enum.GetNames(typeof(Appliance.ApplianceType));
+                    string type = "";
 
-                    if (type == appl.Type.ToString())
+                    for (Byte b = 0; b < types.Count(); b++)
                     {
-                        if ((b + 1) > type.Count())
-                        {
-                            type = types[0];
-                        }
-                        else
-                        {
-                            type = types[b + 1];
-                        }
+                        type = types[b];
 
-                        //Update everything
-                        appl.Type = ApplianceTypeFromType(type);
-                        appl = ApplianceByType(appl.Type);
-                        timerTile.Name = appl.Name;
-                        Appliances.Add(appl);
-                        TimerSetIcon(timerTile, appl);
-                        TimerSetTime(timerTile, appl.Time);
-                        break;
+                        if (type == appl.Type.ToString())
+                        {
+                            if ((b + 1) > type.Count())
+                            {
+                                type = types[0];
+                            }
+                            else
+                            {
+                                type = types[b + 1];
+                            }
+
+                            //Update everything
+                            appl.Type = ApplianceTypeFromType(type);
+                            appl = ApplianceByType(appl.Type);
+                            timerTile.Name = appl.Name;
+                            Appliances.Add(appl);
+                            TimerSetIcon(timerTile, appl);
+                            TimerSetTime(timerTile, appl.Time);
+                            break;
+                        }
                     }
                 }
             }
@@ -719,16 +723,6 @@ namespace ApplianceTMR
                 {
                     appl.IsRunning = !appl.IsRunning;
 
-                    //Set the icon
-                    if (appl.IsRunning == true)
-                    {
-                        timerTile.iconPlayStop.Source = new BitmapImage(new Uri("ms-appx:///Assets/Stop.png"));
-                    }
-                    else
-                    {
-                        timerTile.iconPlayStop.Source = new BitmapImage(new Uri("ms-appx:///Assets/Play.png"));
-                    }
-
                     //Start the timer
                     if (mbIsRunning == false)
                     {
@@ -760,7 +754,7 @@ namespace ApplianceTMR
             }
         }
 
-        public void TimerClose(TimerTile timerTile)
+        public void TimerUnload(TimerTile timerTile)
         {
             try
             {
@@ -791,6 +785,7 @@ namespace ApplianceTMR
                         //Move all other timers up
                         if (mMainPage.Timers.Children.Count > 0)
                         {
+                            //TODO: Issiw with where the Removed Tile is.
                             foreach(TimerTile tmrTile in mMainPage.Timers.Children)
                             {
                                 var transform = tmrTile.TransformToVisual(mMainPage.Timers);

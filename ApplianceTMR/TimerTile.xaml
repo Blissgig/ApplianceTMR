@@ -1,4 +1,5 @@
-﻿<UserControl x:Name="ATMR_TimerTile"
+﻿<UserControl 
+    x:Name="ATMR_TimerTile"
     x:Class="ApplianceTMR.TimerTile"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -9,7 +10,7 @@
     d:DesignHeight="160"
     d:DesignWidth="480"
     >
-    
+
     <Border Name="TileBorder" BorderThickness="1" CornerRadius="16">
         <Grid Name="TileBase" Margin="8">
             <Grid.RowDefinitions>
@@ -25,56 +26,54 @@
 
             <Grid Name="grdControls" Grid.Row="0" Grid.Column="1" >
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="6*"/>
-                    <RowDefinition Height="4*"/>
+                    <RowDefinition Height="55*"/>
+                    <RowDefinition Height="45*"/>
                 </Grid.RowDefinitions>                
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <Grid Name="grdTime" Grid.Row="0" Grid.Column="0" x:FieldModifier="public">
+                <Grid Name="grdTime" Grid.Row="0" Grid.Column="0" x:FieldModifier="public" PointerPressed="Play_PointerPressed">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="{Binding ElementName=ATMR_TimerTile, Path=ActualHeight}" />
                     </Grid.RowDefinitions>
 
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="8" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="8" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Name="TimeHours"        Grid.Row="1" Grid.Column="1" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" Opacity="0.0" x:FieldModifier="public" />
-                    <TextBlock Name="TimeHoursColon"   Grid.Row="1" Grid.Column="2" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" Opacity="0.0" x:FieldModifier="public" />
-                    <TextBlock Name="TimeMinutesTen"   Grid.Row="1" Grid.Column="3" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" Opacity="0.0" x:FieldModifier="public" />
-                    <TextBlock Name="TimeMinutesOne"   Grid.Row="1" Grid.Column="4" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" Opacity="0.0" x:FieldModifier="public" />
-                    <TextBlock Name="TimeMinutesColon" Grid.Row="1" Grid.Column="5" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" Opacity="1.0" x:FieldModifier="public" Text=":" />
-                    <TextBlock Name="TimeSecondsTen"   Grid.Row="1" Grid.Column="6" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" Opacity="1.0" x:FieldModifier="public" />
-                    <TextBlock Name="TimeSecondsOne"   Grid.Row="1" Grid.Column="7" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" Opacity="1.0" x:FieldModifier="public" />
+                    <TextBlock Name="TimeHours"        Grid.Row="1" Grid.Column="1" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="70" Opacity="1.0" x:FieldModifier="public" Text="1" />
+                    <TextBlock Name="TimeHoursColon"   Grid.Row="1" Grid.Column="2" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="70" Opacity="1.0" x:FieldModifier="public" Text=":" />
+                    <TextBlock Name="TimeMinutesTen"   Grid.Row="1" Grid.Column="3" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="70" Opacity="1.0" x:FieldModifier="public" Text="0" />
+                    <TextBlock Name="TimeMinutesOne"   Grid.Row="1" Grid.Column="4" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="70" Opacity="1.0" x:FieldModifier="public" Text="0" />
+                    <TextBlock Name="TimeMinutesColon" Grid.Row="1" Grid.Column="5" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="70" Opacity="1.0" x:FieldModifier="public" Text=":" />
+                    <TextBlock Name="TimeSecondsTen"   Grid.Row="1" Grid.Column="6" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="70" Opacity="1.0" x:FieldModifier="public" Text="0" />
+                    <TextBlock Name="TimeSecondsOne"   Grid.Row="1" Grid.Column="7" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="70" Opacity="1.0" x:FieldModifier="public" Text="0" />
                 </Grid> <!--end of clock grid-->
 
                 <Grid Name="grdButtons" Grid.Row="1" Grid.Column="1" >
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="25*" />
-                        <ColumnDefinition Width="25*" />
-                        <ColumnDefinition Width="25*" />
-                        <ColumnDefinition Width="25*" />
+                        <ColumnDefinition Width="33*" />
+                        <ColumnDefinition Width="33*" />
+                        <ColumnDefinition Width="33*" />
                     </Grid.ColumnDefinitions>
 
                     <Image Name="iconRewind" Grid.Row="0" Grid.Column="0" Margin="0" x:FieldModifier="public" Source="/Assets/Rewind.png" PointerPressed="Rewind_PointerPressed"/>
-                    <Image Name="iconPlayStop" Grid.Row="0" Grid.Column="1" Margin="0" x:FieldModifier="public" Source="/Assets/Play.png" PointerPressed="Play_PointerPressed"/>
-                    <Image Name="iconFastForward" Grid.Row="0" Grid.Column="2" Margin="0" x:FieldModifier="public" Source="/Assets/FastForward.png" PointerPressed="FastForward_PointerPressed"/>
-                    <Image Name="iconClose" Grid.Row="0" Grid.Column="3" Margin="0" x:FieldModifier="public" Source="/Assets/Close.png" PointerPressed="Close_PointerPressed"/>
+                    <Image Name="iconFastForward" Grid.Row="0" Grid.Column="1" Margin="0" x:FieldModifier="public" Source="/Assets/FastForward.png" PointerPressed="FastForward_PointerPressed"/>
+                    <Image Name="iconClose" Grid.Row="0" Grid.Column="2" Margin="0" x:FieldModifier="public" Source="/Assets/Close.png" PointerPressed="Close_PointerPressed"/>
                 </Grid> <!--end of Buttons Grid-->
             </Grid> <!--end of Controls Grid-->
         </Grid>

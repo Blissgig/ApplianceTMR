@@ -7,7 +7,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
-
 namespace ApplianceTMR
 {
     public sealed partial class TimerTile : UserControl
@@ -70,7 +69,7 @@ namespace ApplianceTMR
 
         private void Close_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            mMainPage.TimerEngine.TimerClose(this);
+            mMainPage.TimerEngine.TimerUnload(this);
         }
     }
 }
