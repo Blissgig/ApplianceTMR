@@ -21,34 +21,62 @@
                 <ColumnDefinition Width="5*" />
             </Grid.ColumnDefinitions>
 
-            <Image Name="ApplianceIcon" Grid.Row="0" Grid.Column="0" Margin="8" x:FieldModifier="public" />
+            <Image Name="ApplianceIcon" Grid.Row="0" Grid.Column="0" Margin="4" x:FieldModifier="public" PointerPressed="Icon_PointerPressed" />
 
-            <Ellipse Name="CloseEllipse" Fill="White" Grid.Row="0" Grid.Column="1" Width="24" Height="24" HorizontalAlignment="Right" VerticalAlignment="Top" Canvas.ZIndex="0" PointerPressed="Close_PointerPressed"/>
-            <Grid Name="TimeGrid" Grid.Row="0" Grid.Column="1" x:FieldModifier="public">
+            <Grid Name="grdControls" Grid.Row="0" Grid.Column="1" >
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+                    <RowDefinition Height="6*"/>
+                    <RowDefinition Height="4*"/>
+                </Grid.RowDefinitions>                
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="8" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="8" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Name="TimeHours"        Grid.Row="1" Grid.Column="1" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" Opacity="0.0" x:FieldModifier="public" />
-                <TextBlock Name="TimeHoursColon"   Grid.Row="1" Grid.Column="2" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" Opacity="0.0" x:FieldModifier="public" />
-                <TextBlock Name="TimeMinutesTen"   Grid.Row="1" Grid.Column="3" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" Opacity="0.0" x:FieldModifier="public" />
-                <TextBlock Name="TimeMinutesOne"   Grid.Row="1" Grid.Column="4" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" Opacity="0.0" x:FieldModifier="public" />
-                <TextBlock Name="TimeMinutesColon" Grid.Row="1" Grid.Column="5" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" Opacity="1.0" x:FieldModifier="public" Text=":" />
-                <TextBlock Name="TimeSecondsTen"   Grid.Row="1" Grid.Column="6" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" Opacity="1.0" x:FieldModifier="public" />
-                <TextBlock Name="TimeSecondsOne"   Grid.Row="1" Grid.Column="7" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" Opacity="1.0" x:FieldModifier="public" />
-            </Grid>
+                <Grid Name="grdTime" Grid.Row="0" Grid.Column="0" x:FieldModifier="public">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="8" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="8" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Name="TimeHours"        Grid.Row="1" Grid.Column="1" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" Opacity="0.0" x:FieldModifier="public" />
+                    <TextBlock Name="TimeHoursColon"   Grid.Row="1" Grid.Column="2" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" Opacity="0.0" x:FieldModifier="public" />
+                    <TextBlock Name="TimeMinutesTen"   Grid.Row="1" Grid.Column="3" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" Opacity="0.0" x:FieldModifier="public" />
+                    <TextBlock Name="TimeMinutesOne"   Grid.Row="1" Grid.Column="4" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" Opacity="0.0" x:FieldModifier="public" />
+                    <TextBlock Name="TimeMinutesColon" Grid.Row="1" Grid.Column="5" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" Opacity="1.0" x:FieldModifier="public" Text=":" />
+                    <TextBlock Name="TimeSecondsTen"   Grid.Row="1" Grid.Column="6" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" Opacity="1.0" x:FieldModifier="public" />
+                    <TextBlock Name="TimeSecondsOne"   Grid.Row="1" Grid.Column="7" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44" Opacity="1.0" x:FieldModifier="public" />
+                </Grid> <!--end of clock grid-->
+
+                <Grid Name="grdButtons" Grid.Row="1" Grid.Column="1" >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="25*" />
+                        <ColumnDefinition Width="25*" />
+                        <ColumnDefinition Width="25*" />
+                        <ColumnDefinition Width="25*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Image Name="iconRewind" Grid.Row="0" Grid.Column="0" Margin="0" x:FieldModifier="public" Source="/Assets/Rewind.png" PointerPressed="Rewind_PointerPressed"/>
+                    <Image Name="iconPlayStop" Grid.Row="0" Grid.Column="1" Margin="0" x:FieldModifier="public" Source="/Assets/Play.png" PointerPressed="Play_PointerPressed"/>
+                    <Image Name="iconFastForward" Grid.Row="0" Grid.Column="2" Margin="0" x:FieldModifier="public" Source="/Assets/FastForward.png" PointerPressed="FastForward_PointerPressed"/>
+                    <Image Name="iconClose" Grid.Row="0" Grid.Column="3" Margin="0" x:FieldModifier="public" Source="/Assets/Close.png" PointerPressed="Close_PointerPressed"/>
+                </Grid> <!--end of Buttons Grid-->
+            </Grid> <!--end of Controls Grid-->
         </Grid>
     </Border>
 

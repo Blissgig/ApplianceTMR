@@ -25,11 +25,8 @@ using System.Globalization;
 using Windows.UI.Xaml.Data;
 
 
-
 namespace ApplianceTMR
 {
-
-
     public class Appliance
     {
         #region Private Members
@@ -554,12 +551,12 @@ namespace ApplianceTMR
                     {
                         sValue = Time.Hours.ToString();
                         TextChange(timerTile.TimeHoursColon, ":");
-                        timerTile.TimeGrid.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star); 
+                        timerTile.grdTime.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star); 
                     }
                     else
                     {
                         TextChange(timerTile.TimeHoursColon, "");
-                        timerTile.TimeGrid.ColumnDefinitions[1].Width = new GridLength(0);   
+                        timerTile.grdTime.ColumnDefinitions[1].Width = new GridLength(0);   
                     }
                     TextChange(timerTile.TimeHours, sValue);
                 }
@@ -573,18 +570,18 @@ namespace ApplianceTMR
                         if (Time.Hours > 0)
                         {
                             sValue = "0";
-                            timerTile.TimeGrid.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Star); 
+                            timerTile.grdTime.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Star); 
                         }
                         else
                         {
                             sValue = "";
-                            timerTile.TimeGrid.ColumnDefinitions[2].Width = new GridLength(0);  
+                            timerTile.grdTime.ColumnDefinitions[2].Width = new GridLength(0);  
                         }    
                     }
                     else
                     {
                         sValue = Time.Minutes.ToString("00").Substring(0, 1);
-                        timerTile.TimeGrid.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Star); 
+                        timerTile.grdTime.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Star); 
                     }
 
                     TextChange(timerTile.TimeMinutesTen, sValue);
@@ -615,32 +612,6 @@ namespace ApplianceTMR
             finally
             {
                 tsPreviousTime = Time;
-            }
-        }
-
-        public void TimerStartPause(TimerTile timerTile)
-        {
-            try
-            {
-                Appliance appl = Appliances.Find(e => (e.Name == timerTile.Name));
-
-                //Just in case
-                if (appl != null)
-                {
-                    appl.IsRunning = !appl.IsRunning;
-
-                    if (mbIsRunning == false)
-                    {
-                        mbIsRunning = true;
-                        TimerRun();
-                    }
-                }
-
-                appl = null;
-            }
-            catch (Exception ex)
-            {
-                logException(ex);
             }
         }
 
@@ -677,6 +648,116 @@ namespace ApplianceTMR
 	        {
 		        logException(ex);
 	        }
+        }
+
+        public void TimerApplianceChange(TimerTile timerTile)
+        {
+            try
+            {
+                Appliance appl = Appliances.Find(e => (e.Name == timerTile.Name));
+             
+                Appliances.Remove(appl); //Remove previous appliance from list
+                string[] types = Enum.GetNames(typeof(Appliance.ApplianceType));
+                string type = "";
+
+                for (Byte b = 0; b < types.Count(); b++)
+                {
+                    type = types[b];
+
+                    if (type == appl.Type.ToString())
+                    {
+                        if ((b + 1) > type.Count())
+                        {
+                            type = types[0];
+                        }
+                        else
+                        {
+                            type = types[b + 1];
+                        }
+
+                        //Update everything
+                        appl.Type = ApplianceTypeFromType(type);
+                        appl = ApplianceByType(appl.Type);
+                        timerTile.Name = appl.Name;
+                        Appliances.Add(appl);
+                        TimerSetIcon(timerTile, appl);
+                        TimerSetTime(timerTile, appl.Time);
+                        break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                logException(ex);
+            }
+        }
+
+        public void TimerRewind(TimerTile timerTile)
+        {
+            try
+            {
+                Appliance appl = Appliances.Find(e => (e.Name == timerTile.Name));
+
+                appl.Time += new TimeSpan(0, -1, 0);
+
+                ApplyTime(appl);
+            }
+            catch (Exception ex)
+            {
+                logException(ex);
+            }
+        }
+
+        public void TimerPlayStop(TimerTile timerTile)
+        {
+            try
+            {
+                Appliance appl = Appliances.Find(e => (e.Name == timerTile.Name));
+
+                //Just in case
+                if (appl != null)
+                {
+                    appl.IsRunning = !appl.IsRunning;
+
+                    //Set the icon
+                    if (appl.IsRunning == true)
+                    {
+                        timerTile.iconPlayStop.Source = new BitmapImage(new Uri("ms-appx:///Assets/Stop.png"));
+                    }
+                    else
+                    {
+                        timerTile.iconPlayStop.Source = new BitmapImage(new Uri("ms-appx:///Assets/Play.png"));
+                    }
+
+                    //Start the timer
+                    if (mbIsRunning == false)
+                    {
+                        mbIsRunning = true;
+                        TimerRun();
+                    }
+                    appl = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                logException(ex);
+            }
+        }
+
+        public void TimerFastForward(TimerTile timerTile)
+        {
+            try
+            {
+                Appliance appl = Appliances.Find(e => (e.Name == timerTile.Name));
+
+                appl.Time += new TimeSpan(0, 1, 0);
+
+                ApplyTime(appl);
+            }
+            catch (Exception ex)
+            {
+                logException(ex);
+            }
         }
 
         public void TimerClose(TimerTile timerTile)
@@ -862,54 +943,33 @@ namespace ApplianceTMR
         {
             try
             {
-                byte bDiff = 25;
+                //byte bDiff = 25;
                 GeneralTransform transform;
                 Point controlPosition;
 
+                ////-- SWIPE TILE - CHANGE TIME OR ICON/TYPE --
+                //if ((Math.Abs(mStartingPoint.Position.Y - EndingPoint.Position.Y) < bDiff) && (Math.Abs(mStartingPoint.Position.Y - EndingPoint.Position.X) < this.mdTileSize))
+                //{
+                //    System.Diagnostics.Debug.WriteLine("IconElement");
+                //    //foreach (TimerTile timerTile in mMainPage.Timers.Children)
+                //    //{
+                //    //    transform = timerTile.TransformToVisual(this.mMainPage.Timers);
+                //    //    controlPosition = transform.TransformPoint(new Point(0, 0));
 
-                //-- TIMER START & STOP --
-                if ((Math.Abs(mStartingPoint.Position.X - EndingPoint.Position.X) < bDiff) && (Math.Abs(mStartingPoint.Position.Y - EndingPoint.Position.Y) < bDiff))
-                {
-                    if (Appliances.Count > 0)
-                    {
-                        foreach(TimerTile timerTile in mMainPage.Timers.Children)
-                        {
-                            transform = timerTile.TransformToVisual(this.mMainPage.Timers);
-                            controlPosition = transform.TransformPoint(new Point(0, 0));
+                //    //    if (EndingPoint.Position.Y > controlPosition.Y && EndingPoint.Position.Y < (controlPosition.Y + this.mdTileSize))
+                //    //    {
+                //    //        Appliance applFind = Appliances.Find(e => (e.Name == timerTile.Name));
 
-                            if (EndingPoint.Position.Y > controlPosition.Y && EndingPoint.Position.Y < (controlPosition.Y + this.mdTileSize))
-                            {
-                                TimerStartPause(timerTile);
-                                break;
-                            }
-                        }
-                    }
-                    return;
-                }
-
-                //-- SWIPE TILE - CHANGE TIME OR ICON/TYPE --
-                if ((Math.Abs(mStartingPoint.Position.Y - EndingPoint.Position.Y) < bDiff) && (Math.Abs(mStartingPoint.Position.Y - EndingPoint.Position.X) < this.mdTileSize))
-                {
-                    System.Diagnostics.Debug.WriteLine("IconElement");
-                    //foreach (TimerTile timerTile in mMainPage.Timers.Children)
-                    //{
-                    //    transform = timerTile.TransformToVisual(this.mMainPage.Timers);
-                    //    controlPosition = transform.TransformPoint(new Point(0, 0));
-
-                    //    if (EndingPoint.Position.Y > controlPosition.Y && EndingPoint.Position.Y < (controlPosition.Y + this.mdTileSize))
-                    //    {
-                    //        Appliance applFind = Appliances.Find(e => (e.Name == timerTile.Name));
-
-                    //        //Just in case (hey, no one is perfect)
-                    //        if (applFind != null)
-                    //        {
-                    //            TileSwipe(applFind, timerTile, mStartingPoint, EndingPoint);
-                    //        }
-                    //        break;
-                    //    }
-                    //}
-                    return;
-                }
+                //    //        //Just in case (hey, no one is perfect)
+                //    //        if (applFind != null)
+                //    //        {
+                //    //            TileSwipe(applFind, timerTile, mStartingPoint, EndingPoint);
+                //    //        }
+                //    //        break;
+                //    //    }
+                //    //}
+                //    //return;
+                //}
 
                 //-- SCROLL UP or DOWN --
                 //Only 3 timers added, so need to move anything.
@@ -962,79 +1022,7 @@ namespace ApplianceTMR
             }
         }
 
-        private void TileSwipe(
-            Appliance appliance,
-            TimerTile timerTile,
-            Windows.UI.Input.PointerPoint StartingPoint,
-            Windows.UI.Input.PointerPoint EndingPoint)
-        {
-            try
-            {
-                Int16 iValue = 1;
-                if (StartingPoint.Position.X < (timerTile.ActualWidth / 2))
-                    {
-                        //Affecting Icon
-                        if (EndingPoint.Position.X < StartingPoint.Position.X)
-                        {
-                            iValue = -1;
-                        }
-
-                        string[] types = Enum.GetNames(typeof(Appliance.ApplianceType));
-                        string type = "";
-
-                        for (Byte b = 0; b < types.Count(); b++)
-                        {
-                            type = types[b];
-
-                            if (type == appliance.Type.ToString())
-                            {
-                                if ((b + iValue) > type.Count())
-                                {
-                                    type = types[0];
-                                }
-                                else if ((b + iValue) < 0)
-                                {
-                                    type = types[(types.Count() - 1)];
-                                }
-                                else
-                                {
-                                    type = types[b + iValue];
-                                }
-                                break;
-                            }
-                        }
-
-                        Appliances.Remove(appliance);  //Remove the current item, then add the new one below.
-                        appliance.Type = ApplianceTypeFromType(type);
-                        appliance = ApplianceByType(appliance.Type);
-                        timerTile.Name = appliance.Name;
-                        Appliances.Add(appliance);
-                        TimerSetIcon(timerTile, appliance);
-                        TimerSetTime(timerTile, appliance.Time);
-                    }
-                    else
-                    {
-                        //Affecting Time
-                        if (EndingPoint.Position.X < StartingPoint.Position.X)
-                        {
-                            iValue = -1;
-                        }
-                        TimeSpan timeSpan = appliance.Time.Add(new TimeSpan(0, iValue, 0));
-
-                        //To insure that the value never gets set below zero
-                        if (timeSpan.TotalMinutes > -1)
-                        {
-                            appliance.Time = timeSpan;
-                            TimerSetTime(timerTile, timeSpan);
-                        }
-                    }
-            }
-            catch (Exception ex)
-            {
-                logException(ex);
-            }
-        }
-
+        
         /// <summary>
         /// Code found here.  Just want to send a notification and this does it, nice and simple.
         /// https://code.msdn.microsoft.com/windowsapps/Action-Center-Quickstart-b15089f2/sourcecode?fileId=111808&pathId=298223712
