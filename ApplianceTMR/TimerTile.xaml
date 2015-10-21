@@ -23,8 +23,7 @@
 
             <Image Name="ApplianceIcon" Grid.Row="0" Grid.Column="0" Margin="8" x:FieldModifier="public" />
 
-            <TextBlock Name="Close" Text="X" Grid.Row="0" Grid.Column="1" FontSize="26" Width="30" Height="30" HorizontalAlignment="Right" VerticalAlignment="Top" TextAlignment="Center" Canvas.ZIndex="1" PointerPressed="Close_PointerPressed" />
-            <Ellipse Name="CloseEllipse" Fill="White" Grid.Row="0" Grid.Column="1" Width="30" Height="30" HorizontalAlignment="Right" VerticalAlignment="Top" Canvas.ZIndex="0"/>
+            <Ellipse Name="CloseEllipse" Fill="White" Grid.Row="0" Grid.Column="1" Width="24" Height="24" HorizontalAlignment="Right" VerticalAlignment="Top" Canvas.ZIndex="0" PointerPressed="Close_PointerPressed"/>
             <Grid Name="TimeGrid" Grid.Row="0" Grid.Column="1" x:FieldModifier="public">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>

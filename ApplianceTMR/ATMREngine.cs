@@ -890,23 +890,24 @@ namespace ApplianceTMR
                 //-- SWIPE TILE - CHANGE TIME OR ICON/TYPE --
                 if ((Math.Abs(mStartingPoint.Position.Y - EndingPoint.Position.Y) < bDiff) && (Math.Abs(mStartingPoint.Position.Y - EndingPoint.Position.X) < this.mdTileSize))
                 {
-                    foreach (TimerTile timerTile in mMainPage.Timers.Children)
-                    {
-                        transform = timerTile.TransformToVisual(this.mMainPage.Timers);
-                        controlPosition = transform.TransformPoint(new Point(0, 0));
+                    System.Diagnostics.Debug.WriteLine("IconElement");
+                    //foreach (TimerTile timerTile in mMainPage.Timers.Children)
+                    //{
+                    //    transform = timerTile.TransformToVisual(this.mMainPage.Timers);
+                    //    controlPosition = transform.TransformPoint(new Point(0, 0));
 
-                        if (EndingPoint.Position.Y > controlPosition.Y && EndingPoint.Position.Y < (controlPosition.Y + this.mdTileSize))
-                        {
-                            Appliance applFind = Appliances.Find(e => (e.Name == timerTile.Name));
+                    //    if (EndingPoint.Position.Y > controlPosition.Y && EndingPoint.Position.Y < (controlPosition.Y + this.mdTileSize))
+                    //    {
+                    //        Appliance applFind = Appliances.Find(e => (e.Name == timerTile.Name));
 
-                            //Just in case (hey, no one is perfect)
-                            if (applFind != null)
-                            {
-                                TileSwipe(applFind, timerTile, mStartingPoint, EndingPoint);
-                            }
-                            break;
-                        }
-                    }
+                    //        //Just in case (hey, no one is perfect)
+                    //        if (applFind != null)
+                    //        {
+                    //            TileSwipe(applFind, timerTile, mStartingPoint, EndingPoint);
+                    //        }
+                    //        break;
+                    //    }
+                    //}
                     return;
                 }
 

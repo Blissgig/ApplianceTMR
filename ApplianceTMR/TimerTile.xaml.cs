@@ -35,8 +35,6 @@ namespace ApplianceTMR
 
                 this.TileBorder.Background = TileColor;
 
-                this.Close.Foreground = TileColor;
-
                 this.ApplianceIcon.Source = Icon.Source;
             }
             catch (Exception)
