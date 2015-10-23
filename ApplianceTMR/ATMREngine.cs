@@ -620,8 +620,6 @@ namespace ApplianceTMR
             try 
 	        {
                 bool bRunning = false;
-                Appliance applTemp = new Appliance();
-                IProgress<object> progress = new Progress<object>(_ => ApplyTime(applTemp));
                 await Task.Run(async () =>
                 {
                     while (mbIsRunning == true)
@@ -633,9 +631,11 @@ namespace ApplianceTMR
                             if (appl.IsRunning == true)
                             {
                                 appl.Time = appl.Time.Add(new TimeSpan(0, 0, -1));
-                                applTemp = appl;
+
+                                IProgress<object> progress = new Progress<object>(_ => ApplyTime(appl));
                                 progress.Report(null);
                                 bRunning = true;
+                                progress = null;
                             }
                         }
 
@@ -833,25 +833,28 @@ namespace ApplianceTMR
             }
         }
 
-        private void ApplyTime(Appliance appl)
+        private async void ApplyTime(Appliance appl)
         {
             try
             {
-                TimerTile timerTile = (TimerTile)mMainPage.FindName(appl.Name);
-
-                if (appl.Time.TotalSeconds == 0)
+                await mMainPage.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
                 {
-                    appl.IsRunning = false;
-                    SentToast(appl.FullName, appl.Phrase);
-                    appl = ApplianceDefaults(appl.Type);
-                    TimerSetTime(timerTile, appl.Time);
-                }
-                else
-                {
-                    TimerSetTime(timerTile, appl.Time);
-                }
+                    TimerTile timerTile = (TimerTile)mMainPage.FindName(appl.Name);
 
-                timerTile = null;
+                    if (appl.Time.TotalSeconds == 0)
+                    {
+                        appl.IsRunning = false;
+                        SentToast(appl.FullName, appl.Phrase);
+                        appl = ApplianceDefaults(appl.Type);
+                        TimerSetTime(timerTile, appl.Time);
+                    }
+                    else
+                    {
+                        TimerSetTime(timerTile, appl.Time);
+                    }
+
+                    timerTile = null;
+                });
             }
             catch (Exception ex)
             {
@@ -914,9 +917,9 @@ namespace ApplianceTMR
                                    select name.Value).First();
 
                 string Message =
-                    "Site: Blissgig.com" + Environment.NewLine +
-                    "Contact: Blissgig@gmail.com" + Environment.NewLine +
-                    "Copyright 2015 James Rose" + Environment.NewLine +
+                    "Blissgig.com" + Environment.NewLine +
+                    "Blissgig@gmail.com" + Environment.NewLine +
+                    "© 2015 James Rose" + Environment.NewLine +
                     "Version: " + String.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision); ;
 
 
@@ -938,33 +941,9 @@ namespace ApplianceTMR
         {
             try
             {
-                //byte bDiff = 25;
                 GeneralTransform transform;
                 Point controlPosition;
 
-                ////-- SWIPE TILE - CHANGE TIME OR ICON/TYPE --
-                //if ((Math.Abs(mStartingPoint.Position.Y - EndingPoint.Position.Y) < bDiff) && (Math.Abs(mStartingPoint.Position.Y - EndingPoint.Position.X) < this.mdTileSize))
-                //{
-                //    System.Diagnostics.Debug.WriteLine("IconElement");
-                //    //foreach (TimerTile timerTile in mMainPage.Timers.Children)
-                //    //{
-                //    //    transform = timerTile.TransformToVisual(this.mMainPage.Timers);
-                //    //    controlPosition = transform.TransformPoint(new Point(0, 0));
-
-                //    //    if (EndingPoint.Position.Y > controlPosition.Y && EndingPoint.Position.Y < (controlPosition.Y + this.mdTileSize))
-                //    //    {
-                //    //        Appliance applFind = Appliances.Find(e => (e.Name == timerTile.Name));
-
-                //    //        //Just in case (hey, no one is perfect)
-                //    //        if (applFind != null)
-                //    //        {
-                //    //            TileSwipe(applFind, timerTile, mStartingPoint, EndingPoint);
-                //    //        }
-                //    //        break;
-                //    //    }
-                //    //}
-                //    //return;
-                //}
 
                 //-- SCROLL UP or DOWN --
                 //Only 3 timers added, so need to move anything.
