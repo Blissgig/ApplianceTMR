@@ -46,20 +46,10 @@ namespace ApplianceTMR
         {
             set { this.TileBase.Background = value; }
         }
-
-        private void Icon_PointerPressed(object sender, PointerRoutedEventArgs e)
-        {
-            mMainPage.TimerEngine.TimerApplianceChange(this);
-        }
-
+        
         private void Rewind_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
             mMainPage.TimerEngine.TimerRewind(this);
-        }
-
-        private void Play_PointerPressed(object sender, PointerRoutedEventArgs e)
-        {
-            mMainPage.TimerEngine.TimerPlayStop(this);
         }
 
         private void FastForward_PointerPressed(object sender, PointerRoutedEventArgs e)

@@ -794,8 +794,8 @@ namespace ApplianceTMR
                                 if (controlPosition.Y > dTop)
                                 {
                                     TimerMove(tmrTile, controlPosition.Y ,dTop); 
-                                    dTop = controlPosition.Y;
                                 }
+                                dTop = controlPosition.Y + tmrTile.ActualHeight;
                             }
                         }
                     };
@@ -943,6 +943,40 @@ namespace ApplianceTMR
             {
                 GeneralTransform transform;
                 Point controlPosition;
+                byte bDiff = 50;
+
+                //Single click for Icon and Time
+                if ((Math.Abs(mStartingPoint.Position.Y - EndingPoint.Position.Y) < bDiff) && 
+                    (Math.Abs(mStartingPoint.Position.X - EndingPoint.Position.X) < bDiff))
+                {
+                    foreach (TimerTile timerTile in mMainPage.Timers.Children)
+                    {
+                        transform = timerTile.TransformToVisual(this.mMainPage.Timers);
+                        controlPosition = transform.TransformPoint(new Point(0, 0));
+
+                        if (EndingPoint.Position.Y > controlPosition.Y && EndingPoint.Position.Y < (controlPosition.Y + this.mdTileSize))
+                        {
+                            Appliance applFind = Appliances.Find(e => (e.Name == timerTile.Name));
+
+                            //Just in case (hey, no one is perfect)
+                            if (applFind != null)
+                            {
+                                //Left side: Icon Change
+                                if (EndingPoint.Position.X < (mMainPage.ActualWidth / 2))
+                                {
+                                    TimerApplianceChange(timerTile);
+                                }
+                                else if (EndingPoint.Position.Y < (controlPosition.Y + (timerTile.ActualHeight / 2)))
+                                {
+                                    TimerPlayStop(timerTile);
+                                }
+                            }
+                            break;
+                        }
+                    }
+                     return;
+                }
+
 
 
                 //-- SCROLL UP or DOWN --
