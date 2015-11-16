@@ -669,7 +669,7 @@ namespace ApplianceTMR
 
                         if (type == appl.Type.ToString())
                         {
-                            if ((b + 1) > type.Count())
+                            if ((b + 2) > types.Count())
                             {
                                 type = types[0];
                             }
